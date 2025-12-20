@@ -1,4 +1,8 @@
 // Book data with proper positioning for your bookshelf
+const searchBtn = document.getElementById("searchBtn");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+
 const books = [
   // Top shelf
   { title: "Fourth Wing", author: "Rebecca Yarros", color: "#d4a5a5", left: "8%", top: "5%" },
@@ -37,28 +41,122 @@ books.forEach(book => {
   div.style.top = book.top;
   div.textContent = book.title;
   
-  div.onclick = (e) => {
+  div.addEventListener("click", (e) => {
     e.stopPropagation();
     openModal(book);
-  };
+  });
   
   layer.appendChild(div);
 });
 
 function openModal(book) {
-  modal.classList.remove("hidden");
   document.getElementById("modal-title").textContent = book.title;
   document.getElementById("modal-author").textContent = `by ${book.author}`;
+  modal.classList.remove("hidden");
 }
 
-// Close modal when clicking on the backdrop (not the content)
-modal.onclick = (e) => {
-  if (e.target === modal) {
-    modal.classList.add("hidden");
-  }
-};
+function closeModal() {
+  modal.classList.add("hidden");
+}
 
-// Prevent clicks on modal content from closing the modal
-modalContent.onclick = (e) => {
+// Close modal when clicking on the backdrop (dark area)
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    closeModal();
+  }
+});
+
+// Prevent clicks inside modal content from closing
+modalContent.addEventListener("click", (e) => {
   e.stopPropagation();
-};
+});
+
+// Also allow ESC key to close
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !modal.classList.contains("hidden")) {
+    closeModal();
+  }
+});
+
+searchBtn.addEventListener("click", searchBooks);
+
+async function searchBooks() {
+  const query = searchInput.value.trim();
+  if (!query) return;
+
+  searchResults.innerHTML = "Searching...";
+
+  const res = await fetch(
+    `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`
+  );
+  const data = await res.json();
+
+  renderResults(data.items || []);
+}
+function renderResults(items) {
+  searchResults.innerHTML = "";
+
+  items.slice(0, 8).forEach(item => {
+    const info = item.volumeInfo;
+
+    const card = document.createElement("div");
+    card.className = "result-card";
+
+    const img = document.createElement("img");
+    img.src = info.imageLinks?.thumbnail || "";
+    
+    const title = document.createElement("div");
+    title.textContent = info.title;
+
+    const author = document.createElement("div");
+    author.textContent = info.authors?.[0] || "Unknown";
+
+    const btn = document.createElement("button");
+    btn.textContent = "Add to shelf";
+
+    btn.onclick = () => {
+      addBookToShelf({
+        title: info.title,
+        author: info.authors?.[0] || "Unknown",
+        cover: info.imageLinks?.thumbnail || "",
+      });
+    };
+
+    card.append(img, title, author, btn);
+    searchResults.appendChild(card);
+  });
+}
+
+function addBookToShelf(book) {
+  const spine = document.createElement("div");
+  spine.className = "book";
+
+  spine.style.background = randomSpineColor();
+  spine.style.left = randomShelfX();
+  spine.style.top = randomShelfY();
+
+  spine.textContent = book.title;
+
+  spine.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openModal({
+      title: book.title,
+      author: book.author
+    });
+  });
+
+  layer.appendChild(spine);
+}
+function randomSpineColor() {
+  const colors = ["#d4a5a5", "#a8d8d8", "#d8d8a8", "#c8b8a8", "#b8d8c8"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+function randomShelfX() {
+  return Math.floor(Math.random() * 70 + 10) + "%";
+}
+
+function randomShelfY() {
+  const rows = ["5%", "23.5%", "42%", "60%", "81%"];
+  return rows[Math.floor(Math.random() * rows.length)];
+}

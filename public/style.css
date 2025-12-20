@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   background: #121212;
   display: flex;
   justify-content: center;
@@ -8,12 +9,13 @@ body {
 
 .shelf-wrapper {
   position: relative;
-  width: 420px; /* adjust if needed */
+  width: 420px;
 }
 
 .shelf-image {
   width: 100%;
   image-rendering: pixelated;
+  display: block;
 }
 
 #books-layer {
@@ -42,28 +44,102 @@ body {
   font-size: 9px;
   color: #333;
   padding: 4px;
+  transition: transform 0.2s ease;
 }
 
 .book:hover {
   transform: rotate(180deg) translateY(-4px);
 }
 
-/* Modal */
-#modal {
+/* Modal overlay - IMPORTANT: Use class selector, not ID */
+.modal-overlay {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.8);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
-.hidden {
-  display: none;
+/* Hidden class - MUST have !important OR come after AND be more specific */
+#modal.hidden {
+  display: none !important;
 }
 
 .modal-content {
   background: #fff;
-  padding: 20px;
-  border-radius: 6px;
+  padding: 30px;
+  border-radius: 8px;
+  min-width: 300px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.modal-content h2 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 24px;
+}
+
+.modal-content p {
+  margin: 0 0 20px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.close-hint {
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  padding: 8px;
+  font-family: monospace;
+  width: 220px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-family: monospace;
+}
+
+.search-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  margin-bottom: 30px;
+  max-width: 420px;
+}
+
+.result-card {
+  background: #1e1e1e;
+  padding: 8px;
+  color: white;
+  text-align: center;
+  font-size: 10px;
+}
+
+.result-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  margin-bottom: 6px;
+}
+
+.result-card button {
+  margin-top: 6px;
+  font-size: 10px;
+  cursor: pointer;
 }

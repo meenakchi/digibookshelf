@@ -7,6 +7,12 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+<div class="search-bar">
+  <input id="searchInput" type="text" placeholder="Search for a book..." />
+  <button id="searchBtn">Search</button>
+</div>
+
+<div id="searchResults" class="search-results"></div>
 
   <div class="shelf-wrapper">
     <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
@@ -16,11 +22,11 @@
   </div>
 
   <!-- Modal (hidden by default) -->
-  <div id="modal" class="hidden">
+  <div id="modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h2 id="modal-title"></h2>
       <p id="modal-author"></p>
-      <div class="close-hint">Click anywhere to close</div>
+      <div class="close-hint">Click outside to close</div>
     </div>
   </div>
 
