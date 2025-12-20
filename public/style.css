@@ -1,0 +1,69 @@
+body {
+  background: #121212;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+  font-family: monospace;
+}
+
+.shelf-wrapper {
+  position: relative;
+  width: 420px; /* adjust if needed */
+}
+
+.shelf-image {
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+#books-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Book spine */
+.book {
+  position: absolute;
+  width: 22px;
+  height: 75px;
+  border-radius: 2px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+
+  font-size: 9px;
+  color: #333;
+  padding: 4px;
+}
+
+.book:hover {
+  transform: rotate(180deg) translateY(-4px);
+}
+
+/* Modal */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 6px;
+}

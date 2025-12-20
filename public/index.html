@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Pixel Bookshelf</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="shelf-wrapper">
+    <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
+
+    <!-- Books go here -->
+    <div id="books-layer"></div>
+  </div>
+
+  <!-- Modal (hidden by default) -->
+  <div id="modal" class="hidden">
+    <div class="modal-content">
+      <h2 id="modal-title"></h2>
+      <p id="modal-author"></p>
+      <div class="close-hint">Click anywhere to close</div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
