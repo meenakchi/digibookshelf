@@ -1,54 +1,122 @@
-// Book data with proper positioning for your bookshelf
-const searchBtn = document.getElementById("searchBtn");
-const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
+/* ===============================
+   Firebase imports
+================================ */
+import { db } from "./firebase.js";
+import {
+  collection,
+  addDoc,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-const books = [
-  // Top shelf
-  { title: "Fourth Wing", author: "Rebecca Yarros", color: "#d4a5a5", left: "8%", top: "5%" },
-  { title: "ACOTAR", author: "Sarah J. Maas", color: "#a8d8d8", left: "15.5%", top: "5%" },
-  { title: "The Silent Patient", author: "Alex Michaelides", color: "#d8d8a8", left: "85%", top: "5%" },
-  
-  // Second shelf
-  { title: "Project Hail Mary", author: "Andy Weir", color: "#b8c8d8", left: "8%", top: "23.5%" },
-  { title: "Circe", author: "Madeline Miller", color: "#d8b8a8", left: "15.5%", top: "23.5%" },
-  { title: "The Midnight Library", author: "Matt Haig", color: "#c8d8b8", left: "23%", top: "23.5%" },
-  
-  // Third shelf
-  { title: "Atomic Habits", author: "James Clear", color: "#a8b8c8", left: "85%", top: "42%" },
-  { title: "Dune", author: "Frank Herbert", color: "#c8a898", left: "78%", top: "42%" },
-  { title: "The Song of Achilles", author: "Madeline Miller", color: "#b8d8c8", left: "70%", top: "42%" },
-  
-  // Fourth shelf
-  { title: "1984", author: "George Orwell", color: "#a89898", left: "8%", top: "60%" },
-  { title: "Educated", author: "Tara Westover", color: "#c8b8a8", left: "15.5%", top: "60%" },
-  
-  // Bottom shelf
-  { title: "The Seven Husbands", author: "Taylor Jenkins Reid", color: "#b8a8b8", left: "55%", top: "81%" },
-  { title: "Where the Crawdads Sing", author: "Delia Owens", color: "#a8c8a8", left: "63%", top: "81%" },
-];
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+const auth = getAuth();
+const authContainer = document.getElementById("auth-container");
+const appContainer = document.getElementById("app");
+const authMsg = document.getElementById("authMsg");
 
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+
+registerBtn.onclick = async () => {
+  try {
+    await createUserWithEmailAndPassword(
+      auth,
+      emailInput.value,
+      passwordInput.value
+    );
+  } catch (err) {
+    authMsg.textContent = err.message;
+  }
+};
+
+loginBtn.onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      emailInput.value,
+      passwordInput.value
+    );
+  } catch (err) {
+    authMsg.textContent = err.message;
+  }
+};
+
+logoutBtn.onclick = async () => {
+  await signOut(auth);
+};
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    authContainer.classList.add("hidden");
+    appContainer.classList.remove("hidden");
+    logoutBtn.classList.remove("hidden");
+
+    loadUserBooks(user.uid);
+  } else {
+    authContainer.classList.remove("hidden");
+    appContainer.classList.add("hidden");
+    logoutBtn.classList.add("hidden");
+
+    layer.innerHTML = "";
+    occupiedSlots.clear();
+  }
+});
+
+
+/* ===============================
+   DOM references
+================================ */
 const layer = document.getElementById("books-layer");
 const modal = document.getElementById("modal");
 const modalContent = document.querySelector(".modal-content");
 
-// Create book elements
-books.forEach(book => {
-  const div = document.createElement("div");
-  div.className = "book";
-  div.style.background = book.color;
-  div.style.left = book.left;
-  div.style.top = book.top;
-  div.textContent = book.title;
-  
-  div.addEventListener("click", (e) => {
-    e.stopPropagation();
-    openModal(book);
-  });
-  
-  layer.appendChild(div);
-});
+const searchBtn = document.getElementById("searchBtn");
+const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
 
+/* ===============================
+   SHELF SLOT SYSTEM (IMPORTANT)
+================================ */
+const shelfSlots = [
+  // Top shelf
+  { id: 1, left: "8%", top: "5%" },
+  { id: 2, left: "15.5%", top: "5%" },
+  { id: 3, left: "23%", top: "5%" },
+  { id: 4, left: "85%", top: "5%" },
+
+  // Second shelf
+  { id: 5, left: "8%", top: "23.5%" },
+  { id: 6, left: "15.5%", top: "23.5%" },
+  { id: 7, left: "23%", top: "23.5%" },
+
+  // Third shelf
+  { id: 8, left: "70%", top: "42%" },
+  { id: 9, left: "78%", top: "42%" },
+  { id: 10, left: "85%", top: "42%" },
+
+  // Fourth shelf
+  { id: 11, left: "8%", top: "60%" },
+  { id: 12, left: "15.5%", top: "60%" },
+
+  // Bottom shelf
+  { id: 13, left: "55%", top: "81%" },
+  { id: 14, left: "63%", top: "81%" },
+];
+
+const occupiedSlots = new Set();
+
+/* ===============================
+   MODAL LOGIC
+================================ */
 function openModal(book) {
   document.getElementById("modal-title").textContent = book.title;
   document.getElementById("modal-author").textContent = `by ${book.author}`;
@@ -59,25 +127,23 @@ function closeModal() {
   modal.classList.add("hidden");
 }
 
-// Close modal when clicking on the backdrop (dark area)
 modal.addEventListener("click", (e) => {
-  if (e.target === modal) {
-    closeModal();
-  }
+  if (e.target === modal) closeModal();
 });
 
-// Prevent clicks inside modal content from closing
 modalContent.addEventListener("click", (e) => {
   e.stopPropagation();
 });
 
-// Also allow ESC key to close
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !modal.classList.contains("hidden")) {
     closeModal();
   }
 });
 
+/* ===============================
+   SEARCH (Google Books API)
+================================ */
 searchBtn.addEventListener("click", searchBooks);
 
 async function searchBooks() {
@@ -93,6 +159,7 @@ async function searchBooks() {
 
   renderResults(data.items || []);
 }
+
 function renderResults(items) {
   searchResults.innerHTML = "";
 
@@ -104,7 +171,7 @@ function renderResults(items) {
 
     const img = document.createElement("img");
     img.src = info.imageLinks?.thumbnail || "";
-    
+
     const title = document.createElement("div");
     title.textContent = info.title;
 
@@ -127,36 +194,85 @@ function renderResults(items) {
   });
 }
 
-function addBookToShelf(book) {
+/* ===============================
+   ADD BOOK → FIRESTORE + SHELF
+================================ */
+async function addBookToShelf(book) {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const freeSlot = shelfSlots.find(slot => !occupiedSlots.has(slot.id));
+  if (!freeSlot) {
+    alert("Your bookshelf is full!");
+    return;
+  }
+
+  const spineColor = randomSpineColor();
+  occupiedSlots.add(freeSlot.id);
+
+  await addDoc(
+    collection(db, "users", user.uid, "books"),
+    {
+      title: book.title,
+      author: book.author,
+      coverUrl: book.cover,
+      slotId: freeSlot.id,
+      spineColor
+    }
+  );
+
+  renderSpine(
+    { ...book, spineColor },
+    freeSlot
+  );
+}
+
+
+/* ===============================
+   RENDER SPINE
+================================ */
+function renderSpine(book, slot) {
   const spine = document.createElement("div");
   spine.className = "book";
-
-  spine.style.background = randomSpineColor();
-  spine.style.left = randomShelfX();
-  spine.style.top = randomShelfY();
-
+  spine.style.background = book.spineColor;
+  spine.style.left = slot.left;
+  spine.style.top = slot.top;
   spine.textContent = book.title;
 
   spine.addEventListener("click", (e) => {
     e.stopPropagation();
-    openModal({
-      title: book.title,
-      author: book.author
-    });
+    openModal(book);
   });
 
   layer.appendChild(spine);
 }
+
+/* ===============================
+   LOAD BOOKS FROM FIRESTORE
+================================ */
+async function loadUserBooks(uid) {
+  layer.innerHTML = "";
+  occupiedSlots.clear();
+
+  const snapshot = await getDocs(
+    collection(db, "users", uid, "books")
+  );
+
+  snapshot.forEach(doc => {
+    const book = doc.data();
+    const slot = shelfSlots.find(s => s.id === book.slotId);
+    if (!slot) return;
+
+    occupiedSlots.add(book.slotId);
+    renderSpine(book, slot);
+  });
+}
+
+
+/* ===============================
+   UTIL
+================================ */
 function randomSpineColor() {
   const colors = ["#d4a5a5", "#a8d8d8", "#d8d8a8", "#c8b8a8", "#b8d8c8"];
   return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function randomShelfX() {
-  return Math.floor(Math.random() * 70 + 10) + "%";
-}
-
-function randomShelfY() {
-  const rows = ["5%", "23.5%", "42%", "60%", "81%"];
-  return rows[Math.floor(Math.random() * rows.length)];
 }

@@ -1,15 +1,94 @@
 body {
   margin: 0;
-  background: #121212;
+  background: #f4fffa;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding: 40px;
+  align-items: center;
+  height: 100vh;
   font-family: monospace;
+
+}
+
+.pixel-login {
+  position: relative;
+  width: 700px;
+  margin-bottom: 20px;
+   padding-top: 150px;
+  overflow: hidden;
+}
+
+.login-bg {
+  width: 100%;
+  image-rendering: pixelated;
+  display: block;
+ 
+}
+
+.pixel-input {
+  position: absolute;
+  border: none;
+  background: transparent;
+  font-family: monospace;
+  font-size: 14px;
+  padding: 6px;
+  outline: none;
+}
+
+.pixel-input.email {
+  top: 250px;
+  left: 250px;
+  width: 170px;
+}
+
+.pixel-input.password {
+  top: 300px;
+  left: 340px;
+  width: 130px;
+}
+
+.pixel-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 12px;
+  padding: 8px 16px;
+}
+
+.pixel-btn:hover {
+  opacity: 0.8;
+}
+
+.pixel-btn.login {
+  top: 400px;
+  left: 200px;
+  width: 70px;
+  height: 28px;
+}
+
+.pixel-btn.register {
+  top: 400px;
+  left: 400px;
+  width: 95px;
+  height: 28px;
+}
+
+.auth-msg {
+  position: absolute;
+  top: 380px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: red;
+  white-space: nowrap;
 }
 
 .shelf-wrapper {
   position: relative;
   width: 420px;
+  margin-top: 20px;
 }
 
 .shelf-image {
@@ -26,21 +105,17 @@ body {
   height: 100%;
 }
 
-/* Book spine */
 .book {
   position: absolute;
   width: 22px;
   height: 75px;
   border-radius: 2px;
   cursor: pointer;
-
   display: flex;
   align-items: flex-end;
   justify-content: center;
-
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-
   font-size: 9px;
   color: #333;
   padding: 4px;
@@ -51,7 +126,6 @@ body {
   transform: rotate(180deg) translateY(-4px);
 }
 
-/* Modal overlay - IMPORTANT: Use class selector, not ID */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -65,7 +139,6 @@ body {
   z-index: 9999;
 }
 
-/* Hidden class - MUST have !important OR come after AND be more specific */
 #modal.hidden {
   display: none !important;
 }
@@ -97,20 +170,22 @@ body {
   color: #999;
   font-style: italic;
 }
+
 .search-bar {
   display: flex;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  width: 420px;
 }
 
 .search-bar input {
   padding: 8px;
   font-family: monospace;
-  width: 220px;
+  flex: 1;
 }
 
 .search-bar button {
-  padding: 8px 12px;
+  padding: 8px 20px;
   cursor: pointer;
   font-family: monospace;
 }
@@ -119,7 +194,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 12px;
-  margin-bottom: 30px;
+  margin-top: 20px;
   max-width: 420px;
 }
 
@@ -142,4 +217,22 @@ body {
   margin-top: 6px;
   font-size: 10px;
   cursor: pointer;
+}
+
+#logoutBtn {
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.pixel-input, .pixel-btn {
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
 }

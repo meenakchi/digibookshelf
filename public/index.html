@@ -3,25 +3,48 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Pixel Bookshelf</title>
+  <title>Bookies</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="search-bar">
-  <input id="searchInput" type="text" placeholder="Search for a book..." />
-  <button id="searchBtn">Search</button>
+  <!-- AUTH -->
+   <h1>Booknooks !!</h1>
+
+ <div id="auth-container" class="pixel-login">
+
+  <img src="../assets/login.gif" class="login-bg" />
+
+  <!-- Invisible inputs positioned over the art -->
+  <input id="email" class="pixel-input email" type="email" />
+  <input id="password" class="pixel-input password" type="password" />
+
+  <button id="loginBtn" class="pixel-btn login">LOGIN</button>
+  <button id="registerBtn" class="pixel-btn register">REGISTER</button>
+
+  <p id="authMsg" class="auth-msg"></p>
 </div>
 
-<div id="searchResults" class="search-results"></div>
 
-  <div class="shelf-wrapper">
-    <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
+  <button id="logoutBtn" class="hidden">Logout</button>
 
-    <!-- Books go here -->
-    <div id="books-layer"></div>
+  <!-- APP (HIDDEN UNTIL LOGIN) -->
+  <div id="app" class="hidden">
+
+    <div class="shelf-wrapper">
+      <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
+      <div id="books-layer"></div>
+    </div>
+
+    <div class="search-bar">
+      <input id="searchInput" type="text" placeholder="Search for a book..." />
+      <button id="searchBtn">Search</button>
+    </div>
+
+    <div id="searchResults" class="search-results"></div>
+
   </div>
 
-  <!-- Modal (hidden by default) -->
+  <!-- MODAL -->
   <div id="modal" class="modal-overlay hidden">
     <div class="modal-content">
       <h2 id="modal-title"></h2>
@@ -30,6 +53,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
