@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bookies</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- NAVBAR (Hidden until login) -->
+  <!-- NAVBAR -->
   <nav id="navbar" class="navbar hidden">
     <div class="navbar-brand">
       <img src="../assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
@@ -24,26 +24,29 @@
   </nav>
 
   <!-- AUTH -->
-
   <div id="auth-container" class="pixel-login">
     <img src="../assets/login.gif" class="login-bg" />
-
-    <!-- Invisible inputs positioned over the art -->
     <input id="email" class="pixel-input email" type="email" />
     <input id="password" class="pixel-input password" type="password" />
-
     <button id="loginBtn" class="pixel-btn login">LOGIN</button>
     <button id="registerBtn" class="pixel-btn register">REGISTER</button>
-
     <p id="authMsg" class="auth-msg"></p>
   </div>
 
-  <!-- APP (HIDDEN UNTIL LOGIN) -->
+  <!-- APP -->
   <div id="app" class="hidden">
+    <div class="main-layout">
+      <!-- LEFT SIDE: Big pixel text -->
+      <div class="text-section">
+        <h1 class="pixel-title">MY<br>READING<br>SHELF</h1>
+        <p class="pixel-subtitle">cozy corner for all my books ✿</p>
+      </div>
 
-    <div class="shelf-wrapper">
-      <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
-      <div id="books-layer"></div>
+      <!-- RIGHT SIDE: Shelf -->
+      <div class="shelf-wrapper">
+        <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
+        <div id="books-layer"></div>
+      </div>
     </div>
 
     <div class="search-bar">
@@ -52,15 +55,52 @@
     </div>
 
     <div id="searchResults" class="search-results"></div>
-
   </div>
 
-  <!-- MODAL -->
+  <!-- CUTE MODAL -->
   <div id="modal" class="modal-overlay hidden">
     <div class="modal-content">
-      <h2 id="modal-title"></h2>
-      <p id="modal-author"></p>
-      <div class="close-hint">Click outside to close</div>
+      <!-- Cute duck to close -->
+      <img src="../assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Click to close" />
+      
+      <div class="modal-layout">
+        <!-- Book Cover on the left -->
+        <div class="modal-cover-side">
+          <img id="modal-cover" class="modal-book-cover" src="" alt="Book cover" />
+        </div>
+
+        <!-- All info on the right -->
+        <div class="modal-info-side">
+          <h2 id="modal-title">Book Title</h2>
+          <p id="modal-author" class="author-text">✎ by Author Name</p>
+          
+          <div class="detail-item">
+            <span class="bullet">✿</span>
+            <span class="detail-label">Genre:</span>
+            <span id="modal-genre" class="detail-value">Fiction</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="bullet">♡</span>
+            <span class="detail-label">My Rating:</span>
+            <div class="stars">
+              <span id="star-1" class="star" onclick="setRating(1)">☆</span>
+              <span id="star-2" class="star" onclick="setRating(2)">☆</span>
+              <span id="star-3" class="star" onclick="setRating(3)">☆</span>
+              <span id="star-4" class="star" onclick="setRating(4)">☆</span>
+              <span id="star-5" class="star" onclick="setRating(5)">☆</span>
+            </div>
+          </div>
+
+          <div class="detail-item more-section">
+            <span class="bullet">✧</span>
+            <span class="detail-label">More by this author:</span>
+          </div>
+          <div id="modal-more-books" class="more-books-row"></div>
+        </div>
+      </div>
+
+      <div class="close-hint">✕ Click outside to close</div>
     </div>
   </div>
 

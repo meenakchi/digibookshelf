@@ -5,7 +5,9 @@ import { db } from "./firebase.js";
 import {
   collection,
   addDoc,
-  getDocs
+  getDocs,
+  updateDoc,
+  doc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import {
@@ -58,23 +60,18 @@ logoutBtn.onclick = async () => {
 
 onAuthStateChanged(auth, user => {
   if (user) {
-    // User is logged in
     authContainer.classList.add("hidden");
     appContainer.classList.remove("hidden");
     navbar.classList.remove("hidden");
-
     loadUserBooks(user.uid);
   } else {
-    // User is logged out
     authContainer.classList.remove("hidden");
     appContainer.classList.add("hidden");
     navbar.classList.add("hidden");
-
     layer.innerHTML = "";
     occupiedSlots.clear();
   }
 });
-
 
 /* ===============================
    DOM references
@@ -88,48 +85,134 @@ const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
 
 /* ===============================
-   SHELF SLOT SYSTEM (IMPORTANT)
+   SHELF SLOT SYSTEM
 ================================ */
 const shelfSlots = [
-  // Top shelf
   { id: 1, left: "8%", top: "5%" },
   { id: 2, left: "15.5%", top: "5%" },
   { id: 3, left: "23%", top: "5%" },
   { id: 4, left: "85%", top: "5%" },
-
-  // Second shelf
   { id: 5, left: "8%", top: "23.5%" },
   { id: 6, left: "15.5%", top: "23.5%" },
   { id: 7, left: "23%", top: "23.5%" },
-
-  // Third shelf
   { id: 8, left: "70%", top: "42%" },
   { id: 9, left: "78%", top: "42%" },
   { id: 10, left: "85%", top: "42%" },
-
-  // Fourth shelf
   { id: 11, left: "8%", top: "60%" },
   { id: 12, left: "15.5%", top: "60%" },
-
-  // Bottom shelf
   { id: 13, left: "55%", top: "81%" },
   { id: 14, left: "63%", top: "81%" },
 ];
 
 const occupiedSlots = new Set();
+let currentBookData = null; // Store current book info for rating updates
 
 /* ===============================
    MODAL LOGIC
 ================================ */
-function openModal(book) {
+async function openModal(book) {
+  currentBookData = book;
+  
+  // Set basic info
   document.getElementById("modal-title").textContent = book.title;
-  document.getElementById("modal-author").textContent = `by ${book.author}`;
+  document.getElementById("modal-author").textContent = book.author;
+  document.getElementById("modal-cover").src = book.coverUrl || "";
+  
+  // Set rating
+  const rating = book.rating || 0;
+  updateStarDisplay(rating);
+  
+  // Fetch additional data from Google Books API
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(book.title + " " + book.author)}`
+    );
+    const data = await res.json();
+    
+    if (data.items && data.items.length > 0) {
+      const bookInfo = data.items[0].volumeInfo;
+      
+      // Genre/Categories
+      const genre = bookInfo.categories?.[0] || "Unknown";
+      document.getElementById("modal-genre").textContent = genre;
+      
+      // More books by author
+      fetchMoreByAuthor(book.author);
+    }
+  } catch (err) {
+    console.error("Error fetching book details:", err);
+  }
+  
   modal.classList.remove("hidden");
+}
+
+async function fetchMoreByAuthor(author) {
+  try {
+    const res = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=inauthor:${encodeURIComponent(author)}&maxResults=4`
+    );
+    const data = await res.json();
+    
+    const container = document.getElementById("modal-more-books");
+    container.innerHTML = "";
+    
+    if (data.items) {
+      data.items.forEach(item => {
+        const info = item.volumeInfo;
+        const img = document.createElement("img");
+        img.src = info.imageLinks?.thumbnail || "";
+        img.className = "more-book-cover";
+        img.title = info.title;
+        container.appendChild(img);
+      });
+    }
+  } catch (err) {
+    console.error("Error fetching more books:", err);
+  }
+}
+
+function updateStarDisplay(rating) {
+  for (let i = 1; i <= 5; i++) {
+    const star = document.getElementById(`star-${i}`);
+    if (i <= rating) {
+      star.textContent = "★";
+      star.classList.add("filled");
+    } else {
+      star.textContent = "☆";
+      star.classList.remove("filled");
+    }
+  }
+}
+
+async function setRating(stars) {
+  if (!currentBookData || !auth.currentUser) return;
+  
+  const user = auth.currentUser;
+  
+  // Update in Firestore
+  const booksRef = collection(db, "users", user.uid, "books");
+  const snapshot = await getDocs(booksRef);
+  
+  snapshot.forEach(async (document) => {
+    const bookData = document.data();
+    if (bookData.title === currentBookData.title) {
+      await updateDoc(doc(db, "users", user.uid, "books", document.id), {
+        rating: stars
+      });
+      currentBookData.rating = stars;
+    }
+  });
+  
+  updateStarDisplay(stars);
 }
 
 function closeModal() {
   modal.classList.add("hidden");
+  currentBookData = null;
 }
+
+// Make closeModal available globally for the duck onclick
+window.closeModal = closeModal;
 
 modal.addEventListener("click", (e) => {
   if (e.target === modal) closeModal();
@@ -221,16 +304,16 @@ async function addBookToShelf(book) {
       author: book.author,
       coverUrl: book.cover,
       slotId: freeSlot.id,
-      spineColor
+      spineColor,
+      rating: 0
     }
   );
 
   renderSpine(
-    { ...book, spineColor },
+    { ...book, spineColor, coverUrl: book.cover, rating: 0 },
     freeSlot
   );
 }
-
 
 /* ===============================
    RENDER SPINE
@@ -272,7 +355,6 @@ async function loadUserBooks(uid) {
   });
 }
 
-
 /* ===============================
    UTIL
 ================================ */
@@ -280,3 +362,6 @@ function randomSpineColor() {
   const colors = ["#d4a5a5", "#a8d8d8", "#d8d8a8", "#c8b8a8", "#b8d8c8"];
   return colors[Math.floor(Math.random() * colors.length)];
 }
+
+// Make setRating available globally for onclick
+window.setRating = setRating;
