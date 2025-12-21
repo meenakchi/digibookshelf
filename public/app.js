@@ -15,10 +15,12 @@ import {
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
 const auth = getAuth();
 const authContainer = document.getElementById("auth-container");
 const appContainer = document.getElementById("app");
 const authMsg = document.getElementById("authMsg");
+const navbar = document.getElementById("navbar");
 
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
@@ -56,15 +58,17 @@ logoutBtn.onclick = async () => {
 
 onAuthStateChanged(auth, user => {
   if (user) {
+    // User is logged in
     authContainer.classList.add("hidden");
     appContainer.classList.remove("hidden");
-    logoutBtn.classList.remove("hidden");
+    navbar.classList.remove("hidden");
 
     loadUserBooks(user.uid);
   } else {
+    // User is logged out
     authContainer.classList.remove("hidden");
     appContainer.classList.add("hidden");
-    logoutBtn.classList.add("hidden");
+    navbar.classList.add("hidden");
 
     layer.innerHTML = "";
     occupiedSlots.clear();

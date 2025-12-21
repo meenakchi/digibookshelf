@@ -1,31 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bookies</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- NAVBAR (Hidden until login) -->
+  <nav id="navbar" class="navbar hidden">
+    <div class="navbar-brand">
+      <img src="../assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
+    </div>
+    <div class="navbar-menu">
+      <a href="#" class="navbar-link">My Shelf!</a>
+      <a href="tbr.html" class="navbar-link">To Be read!</a>
+      <a href="profile.html" class="navbar-link">Profile!</a>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </nav>
+
   <!-- AUTH -->
-   <h1>Booknooks !!</h1>
 
- <div id="auth-container" class="pixel-login">
+  <div id="auth-container" class="pixel-login">
+    <img src="../assets/login.gif" class="login-bg" />
 
-  <img src="../assets/login.gif" class="login-bg" />
+    <!-- Invisible inputs positioned over the art -->
+    <input id="email" class="pixel-input email" type="email" />
+    <input id="password" class="pixel-input password" type="password" />
 
-  <!-- Invisible inputs positioned over the art -->
-  <input id="email" class="pixel-input email" type="email" />
-  <input id="password" class="pixel-input password" type="password" />
+    <button id="loginBtn" class="pixel-btn login">LOGIN</button>
+    <button id="registerBtn" class="pixel-btn register">REGISTER</button>
 
-  <button id="loginBtn" class="pixel-btn login">LOGIN</button>
-  <button id="registerBtn" class="pixel-btn register">REGISTER</button>
-
-  <p id="authMsg" class="auth-msg"></p>
-</div>
-
-
-  <button id="logoutBtn" class="hidden">Logout</button>
+    <p id="authMsg" class="auth-msg"></p>
+  </div>
 
   <!-- APP (HIDDEN UNTIL LOGIN) -->
   <div id="app" class="hidden">
