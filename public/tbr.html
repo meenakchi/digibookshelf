@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookies - tbr</title>
+  <title>Bookies - TBR</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- NAVBAR -->
+  <!-- NAVBAR -->
   <nav id="navbar" class="navbar">
     <div class="navbar-brand">
       <img src="../assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
@@ -22,6 +22,95 @@
       <button id="logoutBtn">Logout</button>
     </div>
   </nav>
-  
+
+  <!-- RETRO DESKTOP -->
+  <div id="tbr-desktop">
+    <!-- Desktop Icons (bottom left) -->
+    <div class="desktop-icons">
+      <!-- Windows Icon (not clickable) -->
+      <div class="desktop-icon">
+        <img src="https://win98icons.alexmeub.com/icons/png/computer-4.png" alt="Windows">
+        <span>Windows</span>
+      </div>
+
+      <!-- TBR List Icon -->
+      <div class="desktop-icon clickable" id="tbrListIcon">
+        <img src="https://win98icons.alexmeub.com/icons/png/filepack-1.png" alt="TBR List">
+        <span>My TBR List</span>
+      </div>
+
+      <!-- Reviews Folder Icon -->
+      <div class="desktop-icon clickable" id="reviewsIcon">
+        <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Reviews">
+        <span>Reviews</span>
+      </div>
+    </div>
+
+    <!-- TBR List Window -->
+    <div class="retro-window active" id="tbrWindow" style="left: 500px; top: 100px;">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/filepack-1.png" alt="">
+          My TBR List
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('tbrWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="tbr-list" id="tbrListContainer">
+          <!-- TBR items will be added here -->
+        </div>
+
+        <div class="add-book-form">
+          <div class="form-group">
+            <label>Book Title:</label>
+            <input type="text" id="tbrTitle" placeholder="Enter book title">
+          </div>
+          <div class="form-group">
+            <label>Author:</label>
+            <input type="text" id="tbrAuthor" placeholder="Enter author name">
+          </div>
+          <button class="retro-btn" onclick="addToTBR()">Add to TBR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Window -->
+    <div class="retro-window" id="reviewsWindow" style="left: 200px; top: 150px;">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/directory_open-4.png" alt="">
+          TBR Reviews & Ratings
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('reviewsWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="reviews-summary">
+          <div class="summary-stat">
+            <span class="summary-label">Average Rating</span>
+            <span class="summary-value" id="avgRating">0.0</span>
+          </div>
+          <div class="summary-stat">
+            <span class="summary-label">Total Reviews</span>
+            <span class="summary-value" id="totalReviews">0</span>
+          </div>
+        </div>
+
+        <div class="reviews-list" id="reviewsContainer">
+          <!-- Reviews will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="decorative-stars">
+      <span class="deco-star" style="top: 20%; left: 15%;">✧</span>
+      <span class="deco-star" style="top: 40%; left: 85%;">✦</span>
+      <span class="deco-star" style="top: 70%; left: 20%;">✧</span>
+      <span class="deco-star" style="top: 25%; left: 80%;">✦</span>
+    </div>
+  <script type="module" src="tbr.js"></script>
 </body>
 </html>

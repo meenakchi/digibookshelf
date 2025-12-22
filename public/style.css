@@ -928,3 +928,305 @@ body:has(.profile-container) {
     height: 150px;
   }
 }
+ #tbr-desktop {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f4fffa
+    }
+
+    .desktop-icons {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      z-index: 1;
+    }
+
+    .desktop-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 4px;
+      width: 90px;
+      text-align: center;
+    }
+
+    .desktop-icon.clickable {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .desktop-icon.clickable:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .desktop-icon img {
+      width: 48px;
+      height: 48px;
+      image-rendering: pixelated;
+      filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.3));
+    }
+
+    .desktop-icon span {
+      color: white;
+      font-size: 14px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    }
+
+    .retro-window {
+      position: absolute;
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+      min-width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      display: none;
+      z-index: 10;
+    }
+
+    .retro-window.active {
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+    }
+
+    .window-title-bar {
+      background: linear-gradient(to right, #000080, #1084d0);
+      color: white;
+      padding: 3px 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: move;
+      user-select: none;
+    }
+
+    .window-title {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .window-title img {
+      width: 16px;
+      height: 16px;
+      image-rendering: pixelated;
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 2px;
+    }
+
+    .window-btn {
+      width: 18px;
+      height: 18px;
+      background: #c0c0c0;
+      border: 1px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .window-btn:active {
+      border-color: #000000 #ffffff #ffffff #000000;
+    }
+
+    .window-content {
+      background: white;
+      padding: 15px;
+      flex: 1;
+      overflow-y: auto;
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
+      margin: 2px;
+    }
+
+    .tbr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tbr-item {
+      background: #f0f0f0;
+      padding: 12px;
+      border: 1px solid #808080;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tbr-item-info {
+      flex: 1;
+    }
+
+    .tbr-item-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 4px;
+    }
+
+    .tbr-item-author {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .tbr-item-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .retro-btn {
+      padding: 4px 12px;
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+      font-family: "Jersey 10", sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .retro-btn:active {
+      border-color: #000000 #ffffff #ffffff #000000;
+    }
+
+    .retro-btn:hover {
+      background: #d4d4d4;
+    }
+
+    .add-book-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 2px solid #808080;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      padding: 5px;
+      border: 2px solid;
+      border-color: #808080 #ffffff #ffffff #808080;
+      font-family: "Jersey 10", sans-serif;
+      font-size: 13px;
+    }
+
+    .reviews-summary {
+      background: #f0f0f0;
+      padding: 20px;
+      border: 2px solid #808080;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .summary-stat {
+      margin: 10px 0;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .summary-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #000080;
+      display: block;
+      margin-top: 5px;
+    }
+
+    .reviews-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .review-item {
+      background: #f0f0f0;
+      padding: 12px;
+      border: 1px solid #808080;
+    }
+
+    .review-book-title {
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .review-text {
+      font-size: 12px;
+      color: #333;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .review-meta {
+      font-size: 11px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .review-rating {
+      color: #ff8c00;
+      font-weight: bold;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .window-content::-webkit-scrollbar,
+    .reviews-list::-webkit-scrollbar {
+      width: 16px;
+    }
+
+    .window-content::-webkit-scrollbar-track,
+    .reviews-list::-webkit-scrollbar-track {
+      background: #c0c0c0;
+      border: 1px solid #808080;
+    }
+
+    .window-content::-webkit-scrollbar-thumb,
+    .reviews-list::-webkit-scrollbar-thumb {
+      background: #c0c0c0;
+      border: 2px solid;
+      border-color: #ffffff #000000 #000000 #ffffff;
+    }
