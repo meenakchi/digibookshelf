@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 const auth = getAuth();
@@ -10,16 +10,189 @@ logoutBtn.onclick = async () => {
   window.location.href = "index.html";
 };
 
+// CHARACTER DATA
+const characters = [
+  { id: 'character1', name: 'Baddie', image: '../assets/character1.png' },
+  { id: 'ninja', name: 'Ninja', image: '../assets/ninja.png' },
+  { id: 'mage', name: 'Mage', image: '../assets/mage_f.png' },
+  { id: 'girl', name: 'Green Girl', image: '../assets/greengirl.png' },
+  { id: 'folk', name: 'Folk', image: '../assets/folk.png' },
+  { id: 'warrior', name: 'Warrior', image: '../assets/warrior_f.png' },
+];
+
+let currentCharacterIndex = 0;
+
+// Load character from database
+async function loadSavedCharacter(uid) {
+  try {
+    const docRef = doc(db, "users", uid, "profile", "character");
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const savedChar = docSnap.data();
+      console.log('Loaded saved character:', savedChar);
+      const charIndex = characters.findIndex(c => c.id === savedChar.id);
+      if (charIndex !== -1) {
+        currentCharacterIndex = charIndex;
+        console.log('Set character index to:', currentCharacterIndex);
+        updateCurrentCharacter();
+      }
+    } else {
+      console.log('No saved character found, using default');
+      updateCurrentCharacter();
+    }
+  } catch (err) {
+    console.error('Error loading character:', err);
+    updateCurrentCharacter();
+  }
+}
+
+// Update the main profile character display
+function updateCurrentCharacter() {
+  const char = characters[currentCharacterIndex];
+  console.log('Updating current character to:', char.name);
+  const currentCharImg = document.querySelector('#currentCharacter img');
+  if (currentCharImg) {
+    currentCharImg.src = char.image;
+    currentCharImg.alt = char.name;
+    console.log('✓ Updated main character display');
+  } else {
+    console.error('✗ Could not find #currentCharacter img');
+  }
+}
+
+// Update carousel display
+function updateCarousel() {
+  const char = characters[currentCharacterIndex];
+  console.log('Updating carousel to:', char.name, '(index:', currentCharacterIndex, ')');
+  
+  const carouselImg = document.querySelector('#carouselCharacter img');
+  const charName = document.getElementById('characterName');
+  
+  console.log('Carousel img element:', carouselImg);
+  console.log('Character name element:', charName);
+  
+  if (carouselImg) {
+    carouselImg.src = char.image;
+    carouselImg.alt = char.name;
+    console.log('✓ Updated carousel image to:', char.image);
+  } else {
+    console.error('✗ Could not find #carouselCharacter img');
+  }
+  
+  if (charName) {
+    charName.textContent = char.name;
+    console.log('✓ Updated character name to:', char.name);
+  } else {
+    console.error('✗ Could not find #characterName');
+  }
+}
+
+// Wait for DOM to be ready
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM Content Loaded!');
+  
+  // Check if elements exist
+  console.log('Change avatar button:', document.getElementById('changeAvatarBtn'));
+  console.log('Character selector:', document.getElementById('characterSelector'));
+  console.log('Carousel character:', document.getElementById('carouselCharacter'));
+  console.log('Character name:', document.getElementById('characterName'));
+  
+  // Toggle character selector visibility
+  const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+  if (changeAvatarBtn) {
+    changeAvatarBtn.addEventListener('click', () => {
+      console.log('Change Avatar button clicked!');
+      const selector = document.getElementById('characterSelector');
+      const wasHidden = selector.classList.contains('hidden');
+      selector.classList.toggle('hidden');
+      
+      if (wasHidden) {
+        console.log('Opening selector...');
+        // Small delay to ensure the element is visible before updating
+        setTimeout(() => {
+          updateCarousel();
+        }, 10);
+      } else {
+        console.log('Closing selector...');
+      }
+    });
+  }
+
+  // Previous character
+  const prevBtn = document.getElementById('prevChar');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      console.log('Previous button clicked');
+      currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
+      console.log('New index:', currentCharacterIndex);
+      updateCarousel();
+    });
+  }
+
+  // Next character
+  const nextBtn = document.getElementById('nextChar');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      console.log('Next button clicked');
+      currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+      console.log('New index:', currentCharacterIndex);
+      updateCarousel();
+    });
+  }
+
+  // Select character and save
+  const selectBtn = document.getElementById('selectCharBtn');
+  if (selectBtn) {
+    selectBtn.addEventListener('click', async () => {
+      console.log('Select character button clicked');
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('No user logged in');
+        return;
+      }
+
+      const selectedChar = characters[currentCharacterIndex];
+      console.log('Saving character:', selectedChar);
+      
+      try {
+        await setDoc(doc(db, "users", user.uid, "profile", "character"), {
+          id: selectedChar.id,
+          name: selectedChar.name,
+          image: selectedChar.image,
+          updatedAt: new Date()
+        });
+        
+        console.log('Character saved successfully!');
+        updateCurrentCharacter();
+        document.getElementById('characterSelector').classList.add('hidden');
+        alert('Character saved! ♡');
+      } catch (err) {
+        console.error('Error saving character:', err);
+        alert('Failed to save character');
+      }
+    });
+  }
+});
+
+// Main auth state handler
 onAuthStateChanged(auth, async (user) => {
+  console.log('Auth state changed. User:', user?.email || 'none');
+  
   if (!user) {
     window.location.href = "index.html";
     return;
   }
 
+  // Load saved character
+  await loadSavedCharacter(user.uid);
+
   // Get user's books to calculate stats
   const booksSnapshot = await getDocs(collection(db, "users", user.uid, "books"));
   const books = [];
   booksSnapshot.forEach(doc => books.push(doc.data()));
+
+  console.log('Loaded', books.length, 'books');
 
   // Calculate stats
   const totalBooks = books.length;
@@ -28,12 +201,30 @@ onAuthStateChanged(auth, async (user) => {
     ? (ratedBooks.reduce((sum, b) => sum + b.rating, 0) / ratedBooks.length).toFixed(1)
     : "0.0";
 
-  // Get favorite genre (most common genre would require API calls, so we'll keep it simple)
-  const favoriteGenre = "Mystery"; // Placeholder - you can enhance this
+  // Get favorite genre (most common genre)
+  const genreCounts = {};
+  books.forEach(book => {
+    if (book.genres && book.genres.length > 0) {
+      book.genres.forEach(genre => {
+        genreCounts[genre] = (genreCounts[genre] || 0) + 1;
+      });
+    }
+  });
+
+  let favoriteGenre = "Mystery";
+  let maxCount = 0;
+  for (const [genre, count] of Object.entries(genreCounts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      favoriteGenre = genre;
+    }
+  }
 
   // Update profile info
   document.getElementById("user-email").textContent = user.email;
   document.getElementById("stat-books").textContent = totalBooks;
   document.getElementById("stat-rating").textContent = avgRating;
   document.getElementById("stat-genre").textContent = favoriteGenre;
+  
+  console.log('Profile info updated');
 });
