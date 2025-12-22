@@ -55,7 +55,11 @@ body {
 .navbar-link:hover {
   background: #caf2fb;
 }
-
+ .profile-container {
+      margin-top: 120px;
+      text-align: center;
+      padding: 20px;
+    }
 #logoutBtn {
   border: none;
   padding: 8px 20px;
@@ -526,11 +530,247 @@ body {
     gap: 30px;
   }
 
-  .text-section {
+  .text-section { 
     text-align: center;
   }
 
   .pixel-title {
     font-size: 60px;
+  }
+}/* ===============================
+   PROFILE PAGE STYLES
+================================ */
+
+.profile-container {
+  margin-top: 100px;
+  padding: 40px;
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.profile-title {
+  font-size: 64px;
+  color: #333;
+  margin-bottom: 40px;
+  text-align: center;
+  letter-spacing: 3px;
+}
+
+.profile-card {
+  background: linear-gradient(135deg, #fff5f5 0%, #f0f8ff 100%);
+  border-radius: 25px;
+  padding: 50px;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+  border: 4px solid #ffd1dc;
+  position: relative;
+  z-index: 10;
+}
+
+/* Character floating section */
+.character-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.float-platform {
+  width: 180px;
+  height: 30px;
+  background: linear-gradient(to bottom, #ffd1dc 0%, #ffb6c1 100%);
+  border-radius: 50%;
+  box-shadow: 0 8px 20px rgba(255, 182, 193, 0.4);
+  position: relative;
+  animation: platformFloat 3s ease-in-out infinite;
+}
+
+.float-shadow {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 160px;
+  height: 20px;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: shadowPulse 3s ease-in-out infinite;
+}
+
+.character-sprite {
+  position: absolute;
+  top: -750px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 100px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  animation: characterBob 3s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.character-sprite img {
+  width: 1500px;
+  height: 1500px;
+  object-fit: contain; /* This keeps the aspect ratio */
+  image-rendering: pixelated;
+  
+}
+.character-sprite:hover {
+  animation: characterBob 3s ease-in-out infinite, characterSpin 0.6s ease;
+}
+
+@keyframes platformFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes shadowPulse {
+  0%, 100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.85);
+    opacity: 0.5;
+  }
+}
+
+@keyframes characterBob {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) rotate(-2deg);
+  }
+  25% {
+    transform: translateX(-50%) translateY(-8px) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-12px) rotate(2deg);
+  }
+  75% {
+    transform: translateX(-50%) translateY(-8px) rotate(0deg);
+  }
+}
+
+/* Profile info section */
+.profile-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 15px 20px;
+  border-radius: 15px;
+  border: 2px solid #ffd1dc;
+  transition: all 0.3s ease;
+}
+
+.info-row:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+  border-color: #ffb6c1;
+}
+
+.info-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-value {
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Decorative stars */
+.decorative-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.deco-star {
+  position: absolute;
+  font-size: 32px;
+  color: #ffd1dc;
+  animation: starTwinkle 2s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.deco-star:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.deco-star:nth-child(3) {
+  animation-delay: 1s;
+}
+
+.deco-star:nth-child(4) {
+  animation-delay: 1.5s;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+/* Responsive for profile page */
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+    padding: 40px 30px;
+    gap: 80px;
+  }
+
+  .character-section {
+    margin-bottom: 40px;
+  }
+
+  .info-value {
+    font-size: 20px;
+  }
+
+  .profile-title {
+    font-size: 48px;
   }
 }

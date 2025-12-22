@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bookies</title>
+  <title>Bookies - Profile</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-     <!-- NAVBAR -->
-  <nav id="navbar">
+  <!-- NAVBAR -->
+  <nav id="navbar" class="navbar">
     <div class="navbar-brand">
       <img src="../assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
     </div>
@@ -23,5 +23,66 @@
     </div>
   </nav>
 
+  <!-- PROFILE CONTENT -->
+  <div class="profile-container">
+    <h1 class="profile-title">MY PROFILE</h1>
+
+    <div class="profile-card">
+      <!-- Floating platform with character -->
+      <div class="character-section">
+        <div class="float-platform">
+          <div class="float-shadow"></div>
+        </div>
+        <div class="character-sprite">
+          <img src="../assets/character1.png" alt="defaultavatart" class="char1" />
+        </div>
+      </div>
+
+      <!-- Profile info beside character -->
+      <div class="profile-info">
+        <div class="info-row">
+          <span class="info-icon">✉</span>
+          <div class="info-content">
+            <div class="info-label">Email</div>
+            <div id="user-email" class="info-value">user@example.com</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-icon">📚</span>
+          <div class="info-content">
+            <div class="info-label">Total Books</div>
+            <div id="stat-books" class="info-value">0</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-icon">⭐</span>
+          <div class="info-content">
+            <div class="info-label">Average Rating</div>
+            <div id="stat-rating" class="info-value">0.0</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <span class="info-icon">💖</span>
+          <div class="info-content">
+            <div class="info-label">Favorite Genre</div>
+            <div id="stat-genre" class="info-value">Mystery</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fun decorative elements -->
+    <div class="decorative-stars">
+      <span class="deco-star" style="top: 20%; left: 15%;">✧</span>
+      <span class="deco-star" style="top: 40%; left: 85%;">✦</span>
+      <span class="deco-star" style="top: 70%; left: 20%;">✧</span>
+      <span class="deco-star" style="top: 25%; left: 80%;">✦</span>
+    </div>
+  </div>
+
+  <script type="module" src="profile.js"></script>
 </body>
 </html>
