@@ -4,7 +4,9 @@ import {
   getDocs, 
   addDoc, 
   deleteDoc, 
-  doc 
+  doc,
+  setDoc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { 
   getAuth, 
@@ -15,6 +17,26 @@ import {
 const auth = getAuth();
 let currentUser = null;
 let tbrBooks = [];
+
+// Rewards and book boyfriends data
+const REWARDS = [
+  { id: 'first_book', name: 'First Book', icon: 'https://win98icons.alexmeub.com/icons/png/file_lines-0.png', desc: 'Added your first book', requirement: 1 },
+  { id: 'bookworm', name: 'Bookworm', icon: 'https://win98icons.alexmeub.com/icons/png/winpopup_3-3.png', desc: 'Read 5 books', requirement: 5 },
+  { id: 'scholar', name: 'Scholar', icon: 'https://win98icons.alexmeub.com/icons/png/winhlp32_3-0.png', desc: 'Read 10 books', requirement: 10 },
+  { id: 'week_streak', name: 'Week Warrior', icon: 'https://win98icons.alexmeub.com/icons/png/mspaint-2.png', desc: '7 day streak', requirement: 7 },
+  { id: 'genre_explorer', name: 'Genre Explorer', icon: 'https://win98icons.alexmeub.com/icons/png/directory_open_cool-2.png', desc: 'Read 3+ genres', requirement: 3 }
+];
+
+const BOOK_BOYFRIENDS = [
+  { id: 'malakai', name: 'Kai Azer', series: 'Powerless', author: 'Lauren Roberts'},
+  { id: 'rhysand', name: 'Rhysand', series: 'ACOTAR', author: 'Sarah J. Maas' },
+  { id: 'azriel', name: 'Azriel', series: 'ACOTAR', author: 'Sarah J. Maas' },
+  { id: 'aaron_warner', name: 'Aaron Warner', series: 'Shatter Me', author: 'Tahereh Mafi' },
+  { id: 'cardan', name: 'Cardan', series: 'The Cruel Prince', author: 'Holly Black'},
+  { id: 'xaden', name: 'Xaden Riorson', series: 'Fourth Wing', author: 'Rebecca Yarros' },
+  { id: 'rowan', name: 'Rowan Whitethorn', series: 'Throne of Glass', author: 'Sarah J. Maas' },
+  { id: 'jude', name: 'Carden Greenbriar', series: 'The Cruel Prince', author: 'Holly Black'}
+];
 
 // Logout handler
 document.getElementById("logoutBtn").onclick = async () => {
@@ -75,6 +97,16 @@ document.getElementById('tbrListIcon').addEventListener('click', () => {
 document.getElementById('reviewsIcon').addEventListener('click', async () => {
   openWindow('reviewsWindow');
   await loadReviews();
+});
+
+document.getElementById('rewardsIcon').addEventListener('click', async () => {
+  openWindow('rewardsWindow');
+  await loadRewards();
+});
+
+document.getElementById('boyfriendsIcon').addEventListener('click', async () => {
+  openWindow('boyfriendsWindow');
+  await loadBoyfriends();
 });
 
 // Window functions
@@ -261,4 +293,167 @@ async function loadReviews() {
       </div>
     </div>
   `).join('');
+}
+
+// Load and display rewards
+async function loadRewards() {
+  if (!currentUser) return;
+
+  // Get user's books to calculate achievements
+  const booksSnapshot = await getDocs(collection(db, "users", currentUser.uid, "books"));
+  const books = [];
+  booksSnapshot.forEach(doc => books.push(doc.data()));
+
+  // Calculate streak
+  const rewardsRef = doc(db, "users", currentUser.uid, "rewards", "data");
+  const rewardsDoc = await getDoc(rewardsRef);
+  
+  let streak = 0;
+  let lastVisit = null;
+  let unlockedRewards = new Set();
+
+  if (rewardsDoc.exists()) {
+    const data = rewardsDoc.data();
+    lastVisit = data.lastVisit?.toDate();
+    streak = data.streak || 0;
+    unlockedRewards = new Set(data.unlocked || []);
+  }
+
+  // Update streak
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (lastVisit) {
+    const lastDate = new Date(lastVisit);
+    lastDate.setHours(0, 0, 0, 0);
+    const dayDiff = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+
+    if (dayDiff === 1) {
+      streak++;
+    } else if (dayDiff > 1) {
+      streak = 1;
+    }
+  } else {
+    streak = 1;
+  }
+
+  // Save updated streak
+  await setDoc(rewardsRef, {
+    streak,
+    lastVisit: new Date(),
+    unlocked: Array.from(unlockedRewards)
+  }, { merge: true });
+
+  // Check and unlock rewards
+  const totalBooks = books.length;
+  const genres = new Set();
+  books.forEach(book => {
+    if (book.genres) {
+      book.genres.forEach(g => genres.add(g));
+    }
+  });
+
+  // Check each reward
+  REWARDS.forEach(reward => {
+    let shouldUnlock = false;
+
+    switch(reward.id) {
+      case 'first_book':
+        shouldUnlock = totalBooks >= 1;
+        break;
+      case 'bookworm':
+        shouldUnlock = totalBooks >= 5;
+        break;
+      case 'scholar':
+        shouldUnlock = totalBooks >= 10;
+        break;
+      case 'week_streak':
+        shouldUnlock = streak >= 7;
+        break;
+      case 'genre_explorer':
+        shouldUnlock = genres.size >= 3;
+        break;
+    }
+
+    if (shouldUnlock && !unlockedRewards.has(reward.id)) {
+      unlockedRewards.add(reward.id);
+    }
+  });
+
+  // Save unlocked rewards
+  await setDoc(rewardsRef, {
+    streak,
+    lastVisit: new Date(),
+    unlocked: Array.from(unlockedRewards)
+  }, { merge: true });
+
+  // Display streak
+  document.getElementById('currentStreak').textContent = `${streak} days 🔥`;
+
+  // Display rewards
+  const rewardsContainer = document.getElementById('rewardsContainer');
+  rewardsContainer.innerHTML = REWARDS.map(reward => {
+    const isUnlocked = unlockedRewards.has(reward.id);
+    return `
+      <div class="reward-card ${isUnlocked ? 'unlocked' : 'locked'}">
+        ${isUnlocked ? '<div class="unlock-badge">✓</div>' : ''}
+        <img src="${reward.icon}" class="reward-icon" alt="${reward.name}">
+        <div class="reward-name">${reward.name}</div>
+        <div class="reward-desc">${reward.desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Load and display book boyfriends
+async function loadBoyfriends() {
+  if (!currentUser) return;
+
+  // Get user's books to check what they've read
+  const booksSnapshot = await getDocs(collection(db, "users", currentUser.uid, "books"));
+  const books = [];
+  booksSnapshot.forEach(doc => books.push(doc.data()));
+
+  // Get unlocked boyfriends from Firestore
+  const boyfriendsRef = doc(db, "users", currentUser.uid, "boyfriends", "data");
+  const boyfriendsDoc = await getDoc(boyfriendsRef);
+  
+  let unlockedBoyfriends = new Set();
+  if (boyfriendsDoc.exists()) {
+    unlockedBoyfriends = new Set(boyfriendsDoc.data().unlocked || []);
+  }
+
+  // Check which boyfriends should be unlocked based on books read
+  for (const boyfriend of BOOK_BOYFRIENDS) {
+    // Check if user has read books by this author or from this series
+    const hasReadSeries = books.some(book => 
+      book.author.toLowerCase().includes(boyfriend.author.toLowerCase()) ||
+      book.title.toLowerCase().includes(boyfriend.series.toLowerCase())
+    );
+    
+    if (hasReadSeries && !unlockedBoyfriends.has(boyfriend.id)) {
+      unlockedBoyfriends.add(boyfriend.id);
+    }
+  }
+
+  // Save unlocked boyfriends
+  await setDoc(boyfriendsRef, {
+    unlocked: Array.from(unlockedBoyfriends)
+  }, { merge: true });
+
+  // Display boyfriends
+  const boyfriendsContainer = document.getElementById('boyfriendsContainer');
+  boyfriendsContainer.innerHTML = BOOK_BOYFRIENDS.map(boyfriend => {
+    const isUnlocked = unlockedBoyfriends.has(boyfriend.id);
+    return `
+      <div class="buddy-card ${isUnlocked ? 'unlocked' : 'locked'}">
+        ${isUnlocked 
+          ? `✧`
+          : '<div class="buddy-lock">☒</div>'
+        }
+        <div class="buddy-name">${boyfriend.name}</div>
+        <div class="buddy-genre">${boyfriend.series}</div>
+      </div>
+    `;
+  }).join('');
 }

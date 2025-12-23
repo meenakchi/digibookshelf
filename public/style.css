@@ -1057,6 +1057,51 @@ body:has(.profile-container) {
       border-color: #808080 #ffffff #ffffff #808080;
       margin: 2px;
     }
+/* ===============================
+   REWARDS WINDOW FONT FIX
+================================ */
+
+#rewardsWindow .window-content {
+  font-size: 13px;
+}
+
+.reward-card {
+  font-size: 12px;
+}
+
+.reward-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.reward-desc {
+  font-size: 11px;
+  color: #555;
+  line-height: 1.4;
+}
+
+
+/* ===============================
+   BOOK BOYFRIENDS FONT FIX
+================================ */
+
+#boyfriendsWindow .window-content {
+  font-size: 13px;
+}
+
+.buddy-card {
+  font-size: 12px;
+}
+
+.buddy-name {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.buddy-genre {
+  font-size: 11px;
+  color: #666;
+}
 
     .tbr-list {
       display: flex;

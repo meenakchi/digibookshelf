@@ -44,6 +44,18 @@
         <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Reviews">
         <span>Reviews</span>
       </div>
+
+      <!-- Rewards Icon -->
+      <div class="desktop-icon clickable" id="rewardsIcon">
+        <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-0.png" alt="Rewards">
+        <span>Rewards!</span>
+      </div>
+
+      <!-- Book Boyfriends Icon -->
+      <div class="desktop-icon clickable" id="boyfriendsIcon">
+        <img src="https://win98icons.alexmeub.com/icons/png/msie2-2.png" alt="Book Boyfriends">
+        <span>Collections♡</span>
+      </div>
     </div>
 
     <!-- TBR List Window -->
@@ -104,13 +116,64 @@
         </div>
       </div>
     </div>
-  </div>
-<div class="decorative-stars">
-      <span class="deco-star" style="top: 20%; left: 15%;">✧</span>
-      <span class="deco-star" style="top: 40%; left: 85%;">✦</span>
-      <span class="deco-star" style="top: 70%; left: 20%;">✧</span>
-      <span class="deco-star" style="top: 25%; left: 80%;">✦</span>
+
+    <!-- Rewards Window -->
+    <div class="retro-window" id="rewardsWindow" style="left: 300px; top: 120px;">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-0.png" alt="">
+          my rewards !
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('rewardsWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="rewards-summary">
+          <div class="streak-display">
+            <img src="https://win98icons.alexmeub.com/icons/png/mspaint-2.png" alt="streak" class="reward-icon-large">
+            <div class="streak-info">
+              <span class="streak-label">Current Streak</span>
+              <span class="streak-value" id="currentStreak">0 days!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rewards-grid" id="rewardsContainer">
+          <!-- Rewards will be added here -->
+        </div>
+      </div>
     </div>
+
+    <!-- Book Boyfriends Window -->
+    <div class="retro-window" id="boyfriendsWindow" style="left: 400px; top: 180px;">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/msie2-2.png" alt="">
+          Collections!
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('boyfriendsWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="buddies-hint">
+          <p style="font-size: 12px; color: #666; margin-bottom: 15px;">
+            Unlock book boyfriends by reading books from their series!
+          </p>
+        </div>
+        <div class="buddies-grid" id="boyfriendsContainer">
+          <!-- Book boyfriends will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="decorative-stars">
+    <span class="deco-star" style="top: 20%; left: 15%;">✧</span>
+    <span class="deco-star" style="top: 40%; left: 85%;">✦</span>
+    <span class="deco-star" style="top: 70%; left: 20%;">✧</span>
+    <span class="deco-star" style="top: 25%; left: 80%;">✦</span>
+  </div>
   <script type="module" src="tbr.js"></script>
 </body>
 </html>
