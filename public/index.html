@@ -10,10 +10,9 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- NAVBAR -->
   <nav id="navbar" class="navbar hidden">
     <div class="navbar-brand">
-      <img src="../assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
+      <img src="/assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
     </div>
     <div class="navbar-menu">
       <a href="#" class="navbar-link">My Shelf!</a>
@@ -23,9 +22,8 @@
     </div>
   </nav>
 
-  <!-- AUTH -->
   <div id="auth-container" class="pixel-login">
-    <img src="../assets/login.gif" class="login-bg" />
+    <img src="/assets/login.gif" class="login-bg" />
     <input id="email" class="pixel-input email" type="email" />
     <input id="password" class="pixel-input password" type="password" />
     <button id="loginBtn" class="pixel-btn login">LOGIN</button>
@@ -33,43 +31,43 @@
     <p id="authMsg" class="auth-msg"></p>
   </div>
 
-  <!-- APP -->
   <div id="app" class="hidden">
     <div class="main-layout">
-      <!-- LEFT SIDE: Big pixel text -->
       <div class="text-section">
         <h1 class="pixel-title">MY<br>READING<br>SHELF</h1>
         <p class="pixel-subtitle">cozy corner for all my books ✿</p>
       </div>
 
-      <!-- RIGHT SIDE: Shelf -->
-      <div class="shelf-wrapper">
-        <img src="../assets/bookshelf.png" class="shelf-image" alt="Bookshelf" />
-        <div id="books-layer"></div>
+      <div class="content-section">
+        <div class="shelf-system">
+          <button id="prevShelf" class="nav-btn">←</button>
+          
+          <div class="shelf-wrapper">
+            <div id="shelves-container"></div>
+            </div>
+          
+          <button id="nextShelf" class="nav-btn">→</button>
+        </div>
+
+ 
       </div>
     </div>
-
-    <div class="search-bar">
-      <input id="searchInput" type="text" placeholder="Search for a book..." />
-      <button id="searchBtn">Search</button>
-    </div>
-
-    <div id="searchResults" class="search-results"></div>
   </div>
+       <div class="search-bar">
+          <input id="searchInput" type="text" placeholder="Search for a book..." />
+          <button id="searchBtn">Search</button>
+        </div>
 
-  <!-- CUTE MODAL -->
+        <div id="searchResults" class="search-results"></div>
   <div id="modal" class="modal-overlay hidden">
     <div class="modal-content">
-      <!-- Cute duck to close -->
-      <img src="../assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Click to close" />
+      <img src="/assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Click to close" />
       
       <div class="modal-layout">
-        <!-- Book Cover on the left -->
         <div class="modal-cover-side">
           <img id="modal-cover" class="modal-book-cover" src="" alt="Book cover" />
         </div>
 
-        <!-- All info on the right -->
         <div class="modal-info-side">
           <h2 id="modal-title">Book Title</h2>
           <p id="modal-author" class="author-text">✎ by Author Name</p>

@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: bookies-app
+    env: static
+    buildCommand: |
+      mkdir -p _site
+      cp -r public/* _site/
+      cp -r assets _site/assets
+    staticPublishPath: ./_site
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

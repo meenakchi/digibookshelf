@@ -12,12 +12,80 @@ logoutBtn.onclick = async () => {
 
 // CHARACTER DATA
 const characters = [
-  { id: 'character1', name: 'Baddie', image: '../assets/character1.png' },
-  { id: 'ninja', name: 'Ninja', image: '../assets/ninja.png' },
-  { id: 'mage', name: 'Mage', image: '../assets/mage_f.png' },
-  { id: 'girl', name: 'Green Girl', image: '../assets/greengirl.png' },
-  { id: 'folk', name: 'Folk', image: '../assets/folk.png' },
-  { id: 'warrior', name: 'Warrior', image: '../assets/warrior_f.png' },
+  { id: 'character1', name: 'Baddie', image: '/assets/character1.png' },
+  { id: 'ninja', name: 'Ninja', image: '/assets/ninja.png' },
+  { id: 'mage', name: 'Mage', image: '/assets/mage_f.png' },
+  { id: 'girl', name: 'Green Girl', image: '/assets/greengirl.png' },
+  { id: 'folk', name: 'Folk', image: '/assets/folk.png' },
+  { id: 'warrior', name: 'Warrior', image: '/assets/warrior_f.png' },
+];
+
+// BOOK BOYFRIENDS DATA (matching tbr.js)
+const BOOK_BOYFRIENDS = [
+  { 
+    id: 'malakai', 
+    name: 'Kai Azer', 
+    series: 'Powerless', 
+    author: 'Lauren Roberts',
+    sprite: '/assets/kaiazer.png' // Map to your character sprites
+  },
+  { 
+    id: 'rhysand', 
+    name: 'Rhysand', 
+    series: 'ACOTAR', 
+    author: 'Sarah J. Maas',
+    sprite: '/assets/character1.png'
+  },
+  { 
+    id: 'ravi', 
+    name: 'Ravi Singh', 
+    series: 'A good girl guide to murder', 
+    author: 'Holly Jackson',
+    sprite: '/assets/ravisingh.png'
+  },
+  { 
+    id: 'azriel', 
+    name: 'Azriel', 
+    series: 'ACOTAR', 
+    author: 'Sarah J. Maas',
+    sprite: '/assets/folk.png'
+  },
+  { 
+    id: 'aaron_warner', 
+    name: 'Aaron Warner', 
+    series: 'Shatter Me', 
+    author: 'Tahereh Mafi',
+    sprite: '/assets/warrior_f.png'
+  },
+  { 
+    id: 'cardan', 
+    name: 'Cardan', 
+    series: 'The Cruel Prince', 
+    author: 'Holly Black',
+    sprite: '/assets/carden.png'
+  },
+  { 
+    id: 'xaden', 
+    name: 'Xaden Riorson', 
+    series: 'Fourth Wing', 
+    author: 'Rebecca Yarros',
+    sprite: '/assets/xaden.png'
+  },
+  { 
+    id: 'rowan', 
+    name: 'Rowan Whitethorn', 
+    series: 'Throne of Glass', 
+    author: 'Sarah J. Maas',
+    sprite: '/assets/ninja.png'
+  },
+    { 
+    id: 'zade', 
+    name: 'Zade Meadows', 
+    series: 'Haunting adeline', 
+    author: 'H.D Carlton',
+    sprite: '/assets/zade.png'
+  }
+
 ];
 
 let currentCharacterIndex = 0;
@@ -30,15 +98,12 @@ async function loadSavedCharacter(uid) {
     
     if (docSnap.exists()) {
       const savedChar = docSnap.data();
-      console.log('Loaded saved character:', savedChar);
       const charIndex = characters.findIndex(c => c.id === savedChar.id);
       if (charIndex !== -1) {
         currentCharacterIndex = charIndex;
-        console.log('Set character index to:', currentCharacterIndex);
         updateCurrentCharacter();
       }
     } else {
-      console.log('No saved character found, using default');
       updateCurrentCharacter();
     }
   } catch (err) {
@@ -50,71 +115,103 @@ async function loadSavedCharacter(uid) {
 // Update the main profile character display
 function updateCurrentCharacter() {
   const char = characters[currentCharacterIndex];
-  console.log('Updating current character to:', char.name);
   const currentCharImg = document.querySelector('#currentCharacter img');
   if (currentCharImg) {
     currentCharImg.src = char.image;
     currentCharImg.alt = char.name;
-    console.log('✓ Updated main character display');
-  } else {
-    console.error('✗ Could not find #currentCharacter img');
   }
 }
 
 // Update carousel display
 function updateCarousel() {
   const char = characters[currentCharacterIndex];
-  console.log('Updating carousel to:', char.name, '(index:', currentCharacterIndex, ')');
-  
   const carouselImg = document.querySelector('#carouselCharacter img');
   const charName = document.getElementById('characterName');
-  
-  console.log('Carousel img element:', carouselImg);
-  console.log('Character name element:', charName);
   
   if (carouselImg) {
     carouselImg.src = char.image;
     carouselImg.alt = char.name;
-    console.log('✓ Updated carousel image to:', char.image);
-  } else {
-    console.error('✗ Could not find #carouselCharacter img');
   }
   
   if (charName) {
     charName.textContent = char.name;
-    console.log('✓ Updated character name to:', char.name);
-  } else {
-    console.error('✗ Could not find #characterName');
+  }
+}
+
+// Load and display boyfriends collection
+async function loadBoyfriends(uid) {
+  const showcase = document.getElementById('boyfriendsShowcase');
+  if (!showcase) return;
+
+  try {
+    // Get user's books
+    const booksSnapshot = await getDocs(collection(db, "users", uid, "books"));
+    const books = [];
+    booksSnapshot.forEach(doc => books.push(doc.data()));
+
+    // Get unlocked boyfriends
+    const boyfriendsRef = doc(db, "users", uid, "boyfriends", "data");
+    const boyfriendsDoc = await getDoc(boyfriendsRef);
+    
+    let unlockedBoyfriends = new Set();
+    if (boyfriendsDoc.exists()) {
+      unlockedBoyfriends = new Set(boyfriendsDoc.data().unlocked || []);
+    }
+
+    // Check which boyfriends should be unlocked
+    for (const boyfriend of BOOK_BOYFRIENDS) {
+      const hasReadSeries = books.some(book => 
+        book.author?.toLowerCase().includes(boyfriend.author.toLowerCase()) ||
+        book.title?.toLowerCase().includes(boyfriend.series.toLowerCase())
+      );
+      
+      if (hasReadSeries && !unlockedBoyfriends.has(boyfriend.id)) {
+        unlockedBoyfriends.add(boyfriend.id);
+      }
+    }
+
+    // Save updated unlocked boyfriends
+    await setDoc(boyfriendsRef, {
+      unlocked: Array.from(unlockedBoyfriends)
+    }, { merge: true });
+
+    // Render boyfriends showcase
+    showcase.innerHTML = BOOK_BOYFRIENDS.map(boyfriend => {
+      const isUnlocked = unlockedBoyfriends.has(boyfriend.id);
+      return `
+        <div class="boyfriend-display ${isUnlocked ? 'unlocked' : 'locked'}">
+          <div class="boyfriend-platform"></div>
+          <div class="boyfriend-sprite ${isUnlocked ? '' : 'locked'}">
+            <img src="${boyfriend.sprite}" alt="${boyfriend.name}" />
+          </div>
+          <div class="boyfriend-label">
+            ${boyfriend.name}
+            ${!isUnlocked ? '<div class="boyfriend-unlock-hint">Read ' + boyfriend.series + '</div>' : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (err) {
+    console.error('Error loading boyfriends:', err);
+    showcase.innerHTML = '<div class="empty-state">Error loading collection</div>';
   }
 }
 
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM Content Loaded!');
-  
-  // Check if elements exist
-  console.log('Change avatar button:', document.getElementById('changeAvatarBtn'));
-  console.log('Character selector:', document.getElementById('characterSelector'));
-  console.log('Carousel character:', document.getElementById('carouselCharacter'));
-  console.log('Character name:', document.getElementById('characterName'));
-  
   // Toggle character selector visibility
   const changeAvatarBtn = document.getElementById('changeAvatarBtn');
   if (changeAvatarBtn) {
     changeAvatarBtn.addEventListener('click', () => {
-      console.log('Change Avatar button clicked!');
       const selector = document.getElementById('characterSelector');
       const wasHidden = selector.classList.contains('hidden');
       selector.classList.toggle('hidden');
       
       if (wasHidden) {
-        console.log('Opening selector...');
-        // Small delay to ensure the element is visible before updating
         setTimeout(() => {
           updateCarousel();
         }, 10);
-      } else {
-        console.log('Closing selector...');
       }
     });
   }
@@ -123,9 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const prevBtn = document.getElementById('prevChar');
   if (prevBtn) {
     prevBtn.addEventListener('click', () => {
-      console.log('Previous button clicked');
       currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
-      console.log('New index:', currentCharacterIndex);
       updateCarousel();
     });
   }
@@ -134,9 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextBtn = document.getElementById('nextChar');
   if (nextBtn) {
     nextBtn.addEventListener('click', () => {
-      console.log('Next button clicked');
       currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
-      console.log('New index:', currentCharacterIndex);
       updateCarousel();
     });
   }
@@ -145,15 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const selectBtn = document.getElementById('selectCharBtn');
   if (selectBtn) {
     selectBtn.addEventListener('click', async () => {
-      console.log('Select character button clicked');
       const user = auth.currentUser;
-      if (!user) {
-        console.error('No user logged in');
-        return;
-      }
+      if (!user) return;
 
       const selectedChar = characters[currentCharacterIndex];
-      console.log('Saving character:', selectedChar);
       
       try {
         await setDoc(doc(db, "users", user.uid, "profile", "character"), {
@@ -163,7 +251,6 @@ document.addEventListener('DOMContentLoaded', () => {
           updatedAt: new Date()
         });
         
-        console.log('Character saved successfully!');
         updateCurrentCharacter();
         document.getElementById('characterSelector').classList.add('hidden');
         alert('Character saved! ♡');
@@ -177,8 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Main auth state handler
 onAuthStateChanged(auth, async (user) => {
-  console.log('Auth state changed. User:', user?.email || 'none');
-  
   if (!user) {
     window.location.href = "index.html";
     return;
@@ -187,12 +272,13 @@ onAuthStateChanged(auth, async (user) => {
   // Load saved character
   await loadSavedCharacter(user.uid);
 
+  // Load boyfriends collection
+  await loadBoyfriends(user.uid);
+
   // Get user's books to calculate stats
   const booksSnapshot = await getDocs(collection(db, "users", user.uid, "books"));
   const books = [];
   booksSnapshot.forEach(doc => books.push(doc.data()));
-
-  console.log('Loaded', books.length, 'books');
 
   // Calculate stats
   const totalBooks = books.length;
@@ -225,6 +311,4 @@ onAuthStateChanged(auth, async (user) => {
   document.getElementById("stat-books").textContent = totalBooks;
   document.getElementById("stat-rating").textContent = avgRating;
   document.getElementById("stat-genre").textContent = favoriteGenre;
-  
-  console.log('Profile info updated');
 });
