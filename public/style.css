@@ -919,26 +919,23 @@ body:has(#auth-container:not(.hidden)) .search-results {
    TBR PAGE - Mobile Optimized
 ================================ */
 #tbr-desktop {
+  position: fixed;
   top: 70px;
   left: 0;
   right: 0;
+  bottom: 0;
   background: #f4fffa;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0;
+  overflow: hidden;
 }
 
 .desktop-icons {
-  position: relative; /* Changed from absolute to flow naturally on mobile */
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3x2 grid for better reach */
-  gap: 15px;
-  padding: 15px;
-  width: 100%;
-  max-width: 350px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   z-index: 50;
-  margin-top: 20px;
 }
 
 .desktop-icon {
@@ -946,45 +943,51 @@ body:has(#auth-container:not(.hidden)) .search-results {
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  padding: 10px 5px;
-  border-radius: 8px;
+  padding: 8px;
+  border-radius: 4px;
   text-align: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  touch-action: manipulation;
+  width: 80px;
+}
+
+.desktop-icon.clickable:active {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .desktop-icon img {
-  width: 48px; /* Slightly larger for touch */
-  height: 48px;
+  width: 40px;
+  height: 40px;
   image-rendering: pixelated;
 }
 
 .desktop-icon span {
   color: #333;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: bold;
-  /* Removed white shadow for cleaner look on light bg */
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.8);
 }
-/* Retro Windows - Mobile */
+/* mmmm */
 .retro-window {
   position: fixed;
   background: #c0c0c0;
-  border: 2px solid;
+  border: 3px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
-  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
-  width: 92%; /* Slightly wider for better text fit */
-  max-width: 400px;
-  height: auto;
-  max-height: 75vh;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 500px;
+  max-height: 65vh;
   left: 50%;
-  top: 55%; /* Shifted down so it doesn't cover the Navbar */
+  top: 45%;
   transform: translate(-50%, -50%);
   display: none;
-  z-index: 1000; /* Above icons */
+  z-index: 100;
 }
 
 .retro-window.active {
   display: flex;
   flex-direction: column;
-  z-index: 100;
 }
 
 .window-title-bar {
@@ -997,6 +1000,7 @@ body:has(#auth-container:not(.hidden)) .search-results {
   cursor: default;
   user-select: none;
   touch-action: none;
+  flex-shrink: 0;
 }
 
 .window-title {
@@ -1014,18 +1018,19 @@ body:has(#auth-container:not(.hidden)) .search-results {
 }
 
 .window-btn {
-  width: 10px;
-  height: 10px;
+  width: 18px;
+  height: 18px;
   background: #c0c0c0;
   border: 1px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   touch-action: manipulation;
+  flex-shrink: 0;
 }
 
 .window-btn:active {
@@ -1040,9 +1045,7 @@ body:has(#auth-container:not(.hidden)) .search-results {
   border: 2px solid;
   border-color: #808080 #ffffff #ffffff #808080;
   margin: 3px;
-  font-size: 14px;
-  /* Better scrolling for mobile */
-  scrollbar-width: thin;
+  font-size: 13px;
   -webkit-overflow-scrolling: touch;
 }
 .tbr-list {
@@ -1142,6 +1145,21 @@ body:has(#auth-container:not(.hidden)) .search-results {
 .decorative-stars {
   display: none;
 }
+/* FIX TBR WINDOW ON MOBILE */
+@media (max-width: 767px) {
+  .retro-window {
+    width: 75%;              /* ⬅️ smaller than 90% */
+    max-width: 360px;        /* ⬅️ phone-friendly */
+    height: 50%;
+    top: 320px;              /* ⬅️ comfy under navbar */
+    max-height: calc(100vh - 200px);
+
+    left: 50%;
+  }
+}
+
+
+
 
 /* ===============================
    TABLET & DESKTOP (min-width: 768px)
@@ -1494,8 +1512,8 @@ button,
 .desktop-icon.clickable,
 .nav-btn,
 .star{
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 30px;
+  min-width: 30px;
 }
 
 /* Prevent text selection during touch */
