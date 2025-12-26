@@ -265,7 +265,7 @@ body {
 .book {
   position: absolute;
   width: 18px;
-  height: 65px;
+  height: 50px;
   border-radius: 2px;
   cursor: pointer;
   display: flex;
@@ -273,15 +273,33 @@ body {
   justify-content: center;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 8px;
+  font-size: 7px;
   color: #333;
-  padding: 3px;
+  padding: 3px 1px;
   transition: transform 0.2s ease;
   touch-action: manipulation;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-
 .book:active {
   transform: rotate(180deg) translateY(-4px);
+}
+
+/* Desktop - slightly wider but still thin */
+@media (min-width: 768px) {
+  .book {
+    width: 12px;
+    height: 70px;
+    font-size: 7px;
+    padding: 3px 1px;
+  }
+
+  .book:hover {
+    transform: rotate(180deg) translateY(-4px) scale(1.05);
+  }
 }
 
 /* Navigation Arrows - Touch Friendly */
@@ -1485,8 +1503,7 @@ button,
 .clickable,
 .desktop-icon.clickable,
 .nav-btn,
-.star,
-.book {
+.star{
   min-height: 44px;
   min-width: 44px;
 }

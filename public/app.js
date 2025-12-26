@@ -14,10 +14,9 @@ import {
   getAuth,
   signOut,
   onAuthStateChanged,
-  signInWithEmailAndPassword,    // ADD THIS
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
 
 const auth = getAuth();
 
@@ -39,6 +38,7 @@ const modalContent = document.querySelector(".modal-content");
 const shelvesContainer = document.getElementById("shelves-container");
 const prevShelfBtn = document.getElementById("prevShelf");
 const nextShelfBtn = document.getElementById("nextShelf");
+
 /* ===============================
    AUTH ACTIONS
 ================================ */
@@ -48,20 +48,17 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const authMsg = document.getElementById("authMsg");
 
-// 1. LOGIN LOGIC
 loginBtn.onclick = async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    // onAuthStateChanged will handle the UI switch automatically
   } catch (error) {
     authMsg.textContent = "Login failed: " + error.message;
     authMsg.style.color = "red";
   }
 };
 
-// 2. REGISTER LOGIC
 registerBtn.onclick = async () => {
   const email = emailInput.value;
   const password = passwordInput.value;
@@ -74,32 +71,57 @@ registerBtn.onclick = async () => {
     authMsg.style.color = "red";
   }
 };
+
 /* ===============================
-   SHELF SYSTEM
+   SHELF SYSTEM - FIXED SPACING
 ================================ */
+
 const shelfSlots = [
-  { id: 1, left: "8%", top: "5%" },
-  { id: 2, left: "15.5%", top: "5%" },
-  { id: 3, left: "23%", top: "5%" },
-  { id: 4, left: "85%", top: "5%" },
-  { id: 5, left: "8%", top: "23.5%" },
-  { id: 6, left: "15.5%", top: "23.5%" },
-  { id: 7, left: "23%", top: "23.5%" },
-  { id: 8, left: "70%", top: "42%" },
-  { id: 9, left: "78%", top: "42%" },
-  { id: 10, left: "85%", top: "42%" },
-  { id: 11, left: "8%", top: "60%" },
-  { id: 12, left: "15.5%", top: "60%" },
-  { id: 13, left: "55%", top: "81%" },
-  { id: 14, left: "30%", top: "23.5%" },
-  { id: 15, left: "37%", top: "23.5%" },
-  { id: 16, left: "44%", top: "23.5%" },
-  { id: 17, left: "51%", top: "23.5%" },
+  // Top shelf - far left area
+  { id: 1, left: "8%", top: "6%" },
+  { id: 2, left: "15%", top: "6%" },
+  
+  
+  // Top shelf - far right
+  { id: 4, left: "85%", top: "6%" },
+  { id: 3, left: "78%", top: "6%" },
+
+  // Second shelf - good spacing across
+  { id: 5, left: "8%", top: "25%" },
+  { id: 6, left: "15%", top: "25%" },
+  { id: 7, left: "22%", top: "25%" },
+  { id: 8, left: "29%", top: "25%" },
+  { id: 9, left: "36%", top: "25%" },
+  { id: 10, left: "43%", top: "25%" },
+  { id: 11, left: "50%", top: "25%" },
+  
+  // Third shelf - right side only
+  { id: 12, left: "85%", top: "42%" },
+  { id: 13, left: "78%", top: "42%" },
+  { id: 14, left: "71%", top: "42%" },
+  { id: 15, left: "64%", top: "42%" },
+  { id: 16, left: "57%", top: "42%" },
+  { id: 17, left: "50%", top: "42%" },
+  { id: 22, left: "43%", top: "42%" },
+  { id: 23, left: "36%", top: "42%" },
+  { id: 24, left: "29%", top: "42%" },
+  // Fourth shelf - left side
+  { id: 18, left: "3%", top: "60%" },
+  { id: 19, left: "12%", top: "60%" },
+  { id: 25, left: "64%", top: "60%" },
+  { id: 26, left: "57%", top: "60%" },
+  { id: 27, left: "50%", top: "60%" },
+  { id: 28, left: "43%", top: "60%" },
+  { id: 29, left: "36%", top: "60%" },
+  { id: 30, left: "29%", top: "60%" },
+  // Bottom shelf - middle area
+  { id: 20, left: "50%", top: "81%" },
+  { id: 21, left: "59%", top: "81%" },
 ];
 
 let currentShelfIndex = 0;
 let shelves = [];
-let shelfOccupiedSlots = []; // array of sets for each shelf
+let shelfOccupiedSlots = [];
 let currentBookData = null;
 
 /* ===============================
@@ -115,11 +137,10 @@ onAuthStateChanged(auth, async (user) => {
     appContainer.classList.remove("hidden");
     navbar.classList.remove("hidden");
 
-    // Load or create first shelf
     shelvesContainer.innerHTML = "";
     shelves = [];
     shelfOccupiedSlots = [];
-    createNewShelf(); // create first shelf
+    createNewShelf();
     await loadUserBooks(user.uid);
     showShelf(0);
   } else {
@@ -184,7 +205,6 @@ async function addBookToShelf(book) {
   const spineColor = randomSpineColor();
   occupied.add(freeSlot.id);
 
-  // Store in Firestore
   await addDoc(
     collection(db, "users", user.uid, "books"),
     {
@@ -215,7 +235,12 @@ function renderSpine(book, slot, shelfIndex) {
   spine.style.background = book.spineColor;
   spine.style.left = slot.left;
   spine.style.top = slot.top;
-  spine.textContent = book.title;
+  
+  // Shorten title if too long
+  const shortTitle = book.title.length > 15 
+    ? book.title.substring(0, 15) + "..." 
+    : book.title;
+  spine.textContent = shortTitle;
 
   spine.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -234,7 +259,6 @@ async function loadUserBooks(uid) {
     const book = docSnap.data();
     const shelfIdx = book.shelfIndex ?? 0;
 
-    // Ensure shelf exists
     while (shelfIdx >= shelves.length) createNewShelf();
 
     const occupied = shelfOccupiedSlots[shelfIdx];
@@ -327,8 +351,11 @@ function renderResults(items) {
     const img = document.createElement("img");
     img.src = info.imageLinks?.thumbnail || "";
 
-    const title = document.createElement("div"); title.textContent = info.title;
-    const author = document.createElement("div"); author.textContent = info.authors?.[0] || "Unknown";
+    const title = document.createElement("div"); 
+    title.textContent = info.title;
+    
+    const author = document.createElement("div"); 
+    author.textContent = info.authors?.[0] || "Unknown";
 
     const btn = document.createElement("button");
     btn.textContent = "Add to shelf";
