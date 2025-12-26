@@ -106,11 +106,16 @@ body {
 .pixel-input {
   position: absolute;
   border: none;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.3);
   font-family: "Jersey 10", sans-serif;
   font-size: 12px;
   padding: 4px;
   outline: none;
+  color: #333;
+}
+
+.pixel-input::placeholder {
+  color: rgba(0, 0, 0, 0.3);
 }
 
 .pixel-input.email {
@@ -161,6 +166,12 @@ body {
   font-size: 11px;
   color: red;
   white-space: nowrap;
+}
+
+/* Hide search bar when on login page */
+#auth-container:not(.hidden) ~ #app .search-bar,
+#auth-container:not(.hidden) ~ #app .search-results {
+  display: none !important;
 }
 
 /* ===============================
@@ -253,8 +264,8 @@ body {
 
 .book {
   position: absolute;
-  width: 22px;
-  height: 75px;
+  width: 18px;
+  height: 65px;
   border-radius: 2px;
   cursor: pointer;
   display: flex;
@@ -262,9 +273,9 @@ body {
   justify-content: center;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 9px;
+  font-size: 8px;
   color: #333;
-  padding: 4px;
+  padding: 3px;
   transition: transform 0.2s ease;
   touch-action: manipulation;
 }
@@ -308,6 +319,12 @@ body {
   width: 100%;
   max-width: 100%;
   padding: 0 15px;
+}
+
+/* Hide search when auth container is visible */
+body:has(#auth-container:not(.hidden)) .search-bar,
+body:has(#auth-container:not(.hidden)) .search-results {
+  display: none !important;
 }
 
 .search-bar input {
@@ -894,24 +911,27 @@ body {
 }
 
 .desktop-icons {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  padding: 20px;
-  margin-bottom: 80px;
+  position: fixed;
+  right: 10px;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0;
+  margin: 0;
+  z-index: 50;
 }
 
 .desktop-icon {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 15px;
-  border-radius: 8px;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 4px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.5);
-  border: 2px solid #d4f5e9;
+  background: transparent;
+  border: none;
 }
 
 .desktop-icon.clickable {
@@ -921,21 +941,21 @@ body {
 }
 
 .desktop-icon.clickable:active {
-  background: rgba(168, 216, 216, 0.3);
   transform: scale(0.95);
 }
 
 .desktop-icon img {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   image-rendering: pixelated;
-  filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
 }
 
 .desktop-icon span {
   color: #333;
-  font-size: 16px;
+  font-size: 11px;
   font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
 }
 
 /* Retro Windows - Mobile */
@@ -945,11 +965,11 @@ body {
   border: 2px solid;
   border-color: #ffffff #000000 #000000 #ffffff;
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
-  width: 90%;
-  max-width: 500px;
-  max-height: 70vh;
+  width: 85%;
+  max-width: 400px;
+  max-height: 65vh;
   left: 50%;
-  top: 50%;
+  top: 45%;
   transform: translate(-50%, -50%);
   display: none;
   z-index: 10;
@@ -1110,12 +1130,60 @@ body {
   font-size: 14px;
 }
 
+/* Decorative stars - Hide on profile mobile */
+.decorative-stars {
+  display: none;
+}
+
 /* ===============================
    TABLET & DESKTOP (min-width: 768px)
 ================================ */
 @media (min-width: 768px) {
   body {
     padding-top: 100px;
+  }
+
+  /* Show decorative stars on desktop */
+  .decorative-stars {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .deco-star {
+    position: absolute;
+    font-size: 32px;
+    color: #d4f5e9;
+    animation: starTwinkle 2s ease-in-out infinite;
+    opacity: 0.6;
+  }
+
+  .deco-star:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  .deco-star:nth-child(3) {
+    animation-delay: 1s;
+  }
+
+  .deco-star:nth-child(4) {
+    animation-delay: 1.5s;
+  }
+
+  @keyframes starTwinkle {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.2) rotate(180deg);
+    }
   }
 
   .navbar {
@@ -1142,6 +1210,23 @@ body {
   #logoutBtn {
     font-size: 25px;
     padding: 8px 20px;
+  }
+
+  .pixel-input {
+    background: transparent;
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .book {
+    width: 22px;
+    height: 75px;
+    font-size: 9px;
+    padding: 4px;
+  }
+
+  .book:hover {
+    transform: rotate(180deg) translateY(-4px);
   }
 
   .pixel-login {
