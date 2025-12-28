@@ -18,17 +18,17 @@
       <img src="/assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
     </div>
     <div class="navbar-menu">
-      <a href="#" class="navbar-link">My Shelf!</a>
-      <a href="tbr.html" class="navbar-link">To Be read!</a>
-      <a href="profile.html" class="navbar-link">Profile!</a>
+      <a href="#" class="navbar-link">My Shelf</a>
+      <a href="tbr.html" class="navbar-link">To Read</a>
+      <a href="profile.html" class="navbar-link">Profile</a>
       <button id="logoutBtn">Logout</button>
     </div>
   </nav>
 
   <div id="auth-container" class="pixel-login">
     <img src="/assets/login.gif" class="login-bg" />
-    <input id="email" class="pixel-input email" type="email" />
-    <input id="password" class="pixel-input password" type="password" />
+    <input id="email" class="pixel-input email" type="email" placeholder="Email" />
+    <input id="password" class="pixel-input password" type="password" placeholder="Password" />
     <button id="loginBtn" class="pixel-btn login">LOGIN</button>
     <button id="registerBtn" class="pixel-btn register">REGISTER</button>
     <p id="authMsg" class="auth-msg"></p>
@@ -38,33 +38,63 @@
     <div class="main-layout">
       <div class="text-section">
         <h1 class="pixel-title">MY<br>READING<br>SHELF</h1>
-        <p class="pixel-subtitle">cozy corner for all my books ✿</p>
+        <p class="pixel-subtitle">a cozy corner for my collection</p>
+        
+        <div class="genre-legend" style="margin-top: 30px; font-size: 14px; background: rgba(255,255,255,0.4); padding: 10px; border-radius: 8px;">
+          <h3 style="margin-bottom: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px;">Genre Guide</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #d1b3ff; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>Fantasy</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #ffb3c6; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>Romance</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #a8d8d8; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>Mystery</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #fa9b90ff; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>Thriller</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #bde0fe; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>Sci-Fi</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="width: 12px; height: 12px; background: #ffc8dd; border: 1px solid rgba(0,0,0,0.1);"></span>
+              <span>YA</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="content-section">
         <div class="shelf-system">
-          <button id="prevShelf" class="nav-btn">←</button>
+          <button id="prevShelf" class="nav-btn">PREV</button>
           
           <div class="shelf-wrapper">
             <div id="shelves-container"></div>
-            </div>
+          </div>
           
-          <button id="nextShelf" class="nav-btn">→</button>
+          <button id="nextShelf" class="nav-btn">NEXT</button>
         </div>
-
- 
       </div>
     </div>
   </div>
-       <div class="search-bar">
-          <input id="searchInput" type="text" placeholder="Search for a book..." />
-          <button id="searchBtn">Search</button>
-        </div>
 
-        <div id="searchResults" class="search-results"></div>
+  <div class="search-bar">
+    <input id="searchInput" type="text" placeholder="Search for a book..." />
+    <button id="searchBtn">SEARCH</button>
+  </div>
+
+  <div id="searchResults" class="search-results"></div>
+
   <div id="modal" class="modal-overlay hidden">
     <div class="modal-content">
-      <img src="/assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Click to close" />
+      <img src="/assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Close" />
       
       <div class="modal-layout">
         <div class="modal-cover-side">
@@ -73,17 +103,18 @@
 
         <div class="modal-info-side">
           <h2 id="modal-title">Book Title</h2>
-          <p id="modal-author" class="author-text">✎ by Author Name</p>
+          <p id="modal-author" class="author-text">Written by Author Name</p>
           
           <div class="detail-item">
-            <span class="bullet">✿</span>
+            <span class="bullet">»</span>
             <span class="detail-label">Genre:</span>
             <span id="modal-genre" class="detail-value">Fiction</span>
+            <button onclick="changeGenre()" style="margin-left: 10px; padding: 4px 8px; font-family: 'Jersey 10', sans-serif; background: #a8d8d8; border: 1px solid #88b8b8; border-radius: 4px; cursor: pointer;">EDIT</button>
           </div>
 
           <div class="detail-item">
-            <span class="bullet">♡</span>
-            <span class="detail-label">My Rating:</span>
+            <span class="bullet">»</span>
+            <span class="detail-label">Rating:</span>
             <div class="stars">
               <span id="star-1" class="star" onclick="setRating(1)">☆</span>
               <span id="star-2" class="star" onclick="setRating(2)">☆</span>
@@ -93,15 +124,15 @@
             </div>
           </div>
 
-          <div class="detail-item more-section">
-            <span class="bullet">✧</span>
-            <span class="detail-label">More by this author:</span>
+          <div class="detail-item" style="margin-top: 20px; justify-content: center;">
+            <button onclick="deleteBook()" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Jersey 10', sans-serif; font-size: 18px;">
+                REMOVE BOOK
+            </button>
           </div>
-          <div id="modal-more-books" class="more-books-row"></div>
         </div>
       </div>
 
-      <div class="close-hint">✕ Click outside to close</div>
+      <div class="close-hint">CLICK OUTSIDE TO CLOSE | DRAG TO MOVE</div>
     </div>
   </div>
 

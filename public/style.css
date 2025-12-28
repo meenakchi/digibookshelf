@@ -1587,3 +1587,286 @@ button,
     height: -webkit-fill-available;
   }
 }
+
+/* Add this to the end of your style.css file */
+
+/* ===============================
+   GENRE SELECTOR MODAL
+================================ */
+.genre-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.genre-selector-content {
+  background: linear-gradient(135deg, #fff5f5 0%, #f0f8ff 100%);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  border: 3px solid #ffd1dc;
+}
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.genre-option {
+  padding: 15px 10px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.genre-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #fff;
+}
+
+.cancel-genre {
+  background: #ccc;
+  color: #333;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 18px;
+  width: 100%;
+  transition: opacity 0.2s ease;
+}
+
+.cancel-genre:hover {
+  opacity: 0.8;
+}
+
+/* ===============================
+   BOOK DRAGGING STYLES
+================================ */
+.book {
+  cursor: grab;
+  user-select: none;
+}
+
+.book:active {
+  cursor: grabbing;
+}
+
+.book.dragging {
+  opacity: 0.5;
+  transform: rotate(180deg) scale(1.1);
+}
+
+/* Genre Legend Styles */
+.genre-legend {
+  background: rgba(255, 255, 255, 0.5);
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #d4f5e9;
+}
+
+.genre-legend h3 {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 10px 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .genre-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .genre-option {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+
+  .genre-legend {
+    font-size: 11px;
+  }
+
+  .genre-legend h3 {
+    font-size: 14px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .genre-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Add this to the end of your style.css file */
+
+/* ===============================
+   GENRE SELECTOR MODAL
+================================ */
+.genre-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.genre-selector-content {
+  background: linear-gradient(135deg, #fff5f5 0%, #f0f8ff 100%);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  border: 3px solid #ffd1dc;
+}
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.genre-option {
+  padding: 15px 10px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.genre-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  border-color: #fff;
+}
+
+.cancel-genre {
+  background: #ccc;
+  color: #333;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Jersey 10", sans-serif;
+  font-size: 18px;
+  width: 100%;
+  transition: opacity 0.2s ease;
+}
+
+.cancel-genre:hover {
+  opacity: 0.8;
+}
+
+/* ===============================
+   BOOK DRAGGING STYLES
+================================ */
+.book {
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.book:active {
+  cursor: grabbing;
+}
+
+.book.dragging {
+  opacity: 0.7;
+  transform: rotate(180deg) scale(1.15);
+  animation: pulse 0.5s ease-in-out infinite;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+  z-index: 100;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: rotate(180deg) scale(1.15); }
+  50% { transform: rotate(180deg) scale(1.2); }
+}
+
+/* Genre Legend Styles */
+/* Update your Genre Legend in style.css */
+.genre-legend {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 15px;
+  border-radius: 12px;
+  border: 2px solid #bde0fe; /* Light blue border */
+  backdrop-filter: blur(4px);
+}
+
+/* Ensure book colors match your legend */
+/* You will need to update your app.js logic to use these hex codes */
+.book.fantasy { background-color: #d1b3ff; }
+.book.romance { background-color: #ffb3c6; }
+.book.mystery { background-color: #a8d8d8; }
+.book.thriller { background-color: #fa9b90; }
+.book.scifi    { background-color: #bde0fe; }
+.book.ya       { background-color: #ffc8dd; }
+.genre-legend h3 {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 10px 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .genre-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .genre-option {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+
+  .genre-legend {
+    font-size: 11px;
+  }
+
+  .genre-legend h3 {
+    font-size: 14px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 768px) {
+  .genre-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.book {
+  touch-action: none; /* Add this to your CSS file */
+  user-select: none;  /* Prevents text selection while dragging */
+}
