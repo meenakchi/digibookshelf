@@ -106,7 +106,7 @@ const shelfSlots = [
   { id: 23, left: "36%", top: "42%" },
   { id: 24, left: "29%", top: "42%" },
   // Fourth shelf - left side
-  { id: 18, left: "3%", top: "60%" },
+  { id: 18, left: "8%", top: "60%" },
   { id: 19, left: "12%", top: "60%" },
   { id: 25, left: "64%", top: "60%" },
   { id: 26, left: "57%", top: "60%" },
@@ -194,6 +194,25 @@ async function addBookToShelf(book) {
   const user = auth.currentUser;
   if (!user) return;
 
+  // 🔍 Check if book already exists
+  const snapshot = await getDocs(collection(db, "users", user.uid, "books"));
+  let alreadyExists = false;
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    if (
+      data.title === book.title &&
+      data.author === book.author
+    ) {
+      alreadyExists = true;
+    }
+  });
+
+  if (alreadyExists) {
+    showNotification("This book is already on your shelf!");
+    return;
+  }
+
   const occupied = shelfOccupiedSlots[currentShelfIndex];
   const freeSlot = shelfSlots.find(s => !occupied.has(s.id));
 
@@ -223,7 +242,49 @@ async function addBookToShelf(book) {
     freeSlot,
     currentShelfIndex
   );
+
+  // ✅ Success notification
+  showNotification(" Book added to shelf!");
 }
+
+function showNotification(message) {
+  const notif = document.createElement("div");
+  notif.className = "center-notification";
+  notif.textContent = message;
+
+  document.body.appendChild(notif);
+
+  createConfetti();
+
+  requestAnimationFrame(() => {
+    notif.classList.add("show");
+  });
+
+  setTimeout(() => {
+    notif.classList.remove("show");
+    setTimeout(() => notif.remove(), 400);
+  }, 1800);
+}
+
+function createConfetti() {
+  for (let i = 0; i < 40; i++) {
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.backgroundColor = randomConfettiColor();
+    confetti.style.animationDelay = Math.random() * 0.5 + "s";
+
+    document.body.appendChild(confetti);
+
+    setTimeout(() => confetti.remove(), 2000);
+  }
+}
+
+function randomConfettiColor() {
+  const colors = ["#ffb3c6", "#cdb4db", "#bde0fe", "#ffc8dd", "#a2d2ff"];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
 
 /* ===============================
    RENDER SPINE
@@ -376,4 +437,13 @@ function renderResults(items) {
 function randomSpineColor() {
   const colors = ["#d4a5a5","#a8d8d8","#d8d8a8","#c8b8a8","#b8d8c8"];
   return colors[Math.floor(Math.random() * colors.length)];
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("sw.js")
+      .then(() => console.log("✅ Service Worker registered"))
+      .catch(err => console.error("❌ SW failed", err));
+  });
 }

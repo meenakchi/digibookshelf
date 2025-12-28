@@ -1,0 +1,20 @@
+{
+  "name": "bookies",
+  "short_name": "bookies",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4fffa",
+  "theme_color": "#f4fffa",
+"icons": [
+  {
+    "src": "/assets/blueberry.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  },
+  {
+    "src": "/assets/blueberry.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }
+]
+}

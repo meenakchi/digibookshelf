@@ -27,14 +27,14 @@ const BOOK_BOYFRIENDS = [
     name: 'Kai Azer', 
     series: 'Powerless', 
     author: 'Lauren Roberts',
-    sprite: '/assets/kaiazer.png' // Map to your character sprites
+    sprite: '/assets/kaiazer.png'
   },
   { 
     id: 'rhysand', 
     name: 'Rhysand', 
     series: 'ACOTAR', 
     author: 'Sarah J. Maas',
-    sprite: '/assets/character1.png'
+    sprite: '/assets/rhysand.png'
   },
   { 
     id: 'ravi', 
@@ -48,14 +48,14 @@ const BOOK_BOYFRIENDS = [
     name: 'Azriel', 
     series: 'ACOTAR', 
     author: 'Sarah J. Maas',
-    sprite: '/assets/folk.png'
+    sprite: '/assets/azriel.png'
   },
   { 
     id: 'aaron_warner', 
     name: 'Aaron Warner', 
     series: 'Shatter Me', 
     author: 'Tahereh Mafi',
-    sprite: '/assets/warrior_f.png'
+    sprite: '/assets/aaron.png'
   },
   { 
     id: 'cardan', 
@@ -76,18 +76,145 @@ const BOOK_BOYFRIENDS = [
     name: 'Rowan Whitethorn', 
     series: 'Throne of Glass', 
     author: 'Sarah J. Maas',
-    sprite: '/assets/ninja.png'
+    sprite: '/assets/rowan.png'
   },
-    { 
+  { 
     id: 'zade', 
     name: 'Zade Meadows', 
     series: 'Haunting adeline', 
     author: 'H.D Carlton',
     sprite: '/assets/zade.png'
+  },
+  { 
+    id: 'julien', 
+    name: 'Julien', 
+    series: 'Caraval', 
+    author: 'Stephanie Garber',
+    sprite: '/assets/julien.png'
+  },
+  { 
+    id: 'jacks', 
+    name: 'Lord Jacks', 
+    series: 'Once upon a broken heart', 
+    author: 'Stephanie Garber',
+    sprite: '/assets/jacks.png'
+  },
+  { 
+    id: 'percy', 
+    name: 'Percy Jackson', 
+    series: 'Percy & the olympians', 
+    author: 'Rick Riordan',
+    sprite: '/assets/percy.png'
+  },
+  /* Twisted Series */
+  { 
+    id: 'alex_v', 
+    name: 'Alex Volkov', 
+    series: 'Twisted Love', 
+    author: 'Ana Huang',
+    sprite: '/assets/alex.png'
+  },
+  { 
+    id: 'rhys_l', 
+    name: 'Rhys Larsen', 
+    series: 'Twisted Games', 
+    author: 'Ana Huang',
+    sprite: '/assets/rhys.png'
+  },
+  { 
+    id: 'josh_c', 
+    name: 'Josh Chen', 
+    series: 'Twisted Hate', 
+    author: 'Ana Huang',
+    sprite: '/assets/josh.png'
+  },
+  { 
+    id: 'christian_h', 
+    name: 'Christian Harper', 
+    series: 'Twisted Lies', 
+    author: 'Ana Huang',
+    sprite: '/assets/christian.png'
+  },
+  /* King of Sins */
+  { 
+    id: 'dante_r', 
+    name: 'Dante Russo', 
+    series: 'King of Wrath', 
+    author: 'Ana Huang',
+    sprite: '/assets/dante.png'
+  },
+  { 
+    id: 'kai_y', 
+    name: 'Kai Young', 
+    series: 'King of Pride', 
+    author: 'Ana Huang',
+    sprite: '/assets/kaiyoung.png'
+  },
+  { 
+    id: 'dominic_d', 
+    name: 'Dominic Davenport', 
+    series: 'King of Greed', 
+    author: 'Ana Huang',
+    sprite: '/assets/dominic_d.png'
+  },
+  { 
+    id: 'xavier_c', 
+    name: 'Xavier Castillo', 
+    series: 'King of Sloth', 
+    author: 'Ana Huang',
+    sprite: '/assets/xavier_c.png'
+  },
+  { 
+    id: 'vuk_m', 
+    name: 'Vuk Markovic', 
+    series: 'King of Envy', 
+    author: 'Ana Huang',
+    sprite: '/assets/vuk_m.png'
+  },
+  /* New Additions */
+  { 
+    id: 'riden', 
+    name: 'Riden', 
+    series: 'Daughter of the Pirate King', 
+    author: 'Tricia Levenseller',
+    sprite: '/assets/riden.png'
+  },
+  { 
+    id: 'trystan', 
+    name: 'Trystan (The Villain)', 
+    series: 'Assistant to the Villain', 
+    author: 'Hannah Nicole Maehrer',
+    sprite: '/assets/trystan.png'
+  },
+  { 
+    id: 'will_h', 
+    name: 'Will Herondale', 
+    series: 'The Infernal Devices', 
+    author: 'Cassandra Clare',
+    sprite: '/assets/will_h.png'
+  },
+  { 
+    id: 'raihn', 
+    name: 'Raihn', 
+    series: 'Crowns of Nyaxia', 
+    author: 'Carissa Broadbent',
+    sprite: '/assets/raihn.png'
+  },
+  { 
+    id: 'johnny_k', 
+    name: 'Johnny Kavanagh', 
+    series: 'Boys of Tommen', 
+    author: 'Chloe Walsh',
+    sprite: '/assets/johnny_k.png'
+  },
+  { 
+    id: 'atlas_c', 
+    name: 'Atlas Corrigan', 
+    series: 'It Ends With Us', 
+    author: 'Colleen Hoover',
+    sprite: '/assets/atlas_c.png'
   }
-
 ];
-
 let currentCharacterIndex = 0;
 
 // Load character from database

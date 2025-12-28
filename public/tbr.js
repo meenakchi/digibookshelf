@@ -28,7 +28,7 @@ const REWARDS = [
 ];
 
 const BOOK_BOYFRIENDS = [
-  { id: 'malakai', name: 'Kai Azer', series: 'Powerless', author: 'Lauren Roberts'},
+{ id: 'malakai', name: 'Kai Azer', series: 'Powerless', author: 'Lauren Roberts'},
   { id: 'rhysand', name: 'Rhysand', series: 'ACOTAR', author: 'Sarah J. Maas' },
   { id: 'azriel', name: 'Azriel', series: 'ACOTAR', author: 'Sarah J. Maas' },
   { id: 'aaron_warner', name: 'Aaron Warner', series: 'Shatter Me', author: 'Tahereh Mafi' },
@@ -40,7 +40,33 @@ const BOOK_BOYFRIENDS = [
   { id: 'Jacks', name: 'Lord Jacks', series: 'Once upon a broken heart', author: 'Stephaine Garber' },
   { id: 'Zade', name: 'Zade Meadows', series: 'Haunting Adeline', author: 'H.D Carlton' },
   { id: 'percy', name: 'Percy Jackson', series: 'Percy & the olympians', author: 'Rick Riordan'},
+  
+  /* Twisted Series */
+  { id: 'alex_v', name: 'Alex Volkov', series: 'Twisted Love', author: 'Ana Huang' },
+  { id: 'rhys_l', name: 'Rhys Larsen', series: 'Twisted Games', author: 'Ana Huang' },
+  { id: 'josh_c', name: 'Josh Chen', series: 'Twisted Hate', author: 'Ana Huang' },
+  { id: 'christian_h', name: 'Christian Harper', series: 'Twisted Lies', author: 'Ana Huang' },
 
+  /* King of Sins Series */
+  { id: 'dante_r', name: 'Dante Russo', series: 'King of Wrath', author: 'Ana Huang' },
+  { id: 'kai_y', name: 'Kai Young', series: 'King of Pride', author: 'Ana Huang' },
+  { id: 'dominic_d', name: 'Dominic Davenport', series: 'King of Greed', author: 'Ana Huang' },
+  { id: 'xavier_c', name: 'Xavier Castillo', series: 'King of Sloth', author: 'Ana Huang' },
+  { id: 'vuk_m', name: 'Vuk Markovic', series: 'King of Envy', author: 'Ana Huang' },
+
+  /* Requested Additions */
+  { id: 'alosa_r', name: 'Riden', series: 'Daughter of the Pirate King', author: 'Tricia Levenseller' },
+  { id: 'villain', name: 'The Villain (Trystan)', series: 'Assistant to the Villain', author: 'Hannah Nicole Maehrer' },
+
+  /* Popular & Underrated Picks */
+  { id: 'casteel', name: 'Casteel Da’Neer', series: 'From Blood and Ash', author: 'Jennifer L. Armentrout' },
+  { id: 'will_h', name: 'Will Herondale', series: 'The Infernal Devices', author: 'Cassandra Clare' },
+  { id: 'raihn', name: 'Raihn', series: 'Crowns of Nyaxia', author: 'Carissa Broadbent' },
+  { id: 'johnny_k', name: 'Johnny Kavanagh', series: 'Boys of Tommen', author: 'Chloe Walsh' },
+  { id: 'atlas_c', name: 'Atlas Corrigan', series: 'It Ends With Us', author: 'Colleen Hoover' },
+  { id: 'wendell_b', name: 'Wendell Bambleby', series: 'Emily Wilde’s Encyclopaedia', author: 'Heather Fawcett' },
+  { id: 'creighton_k', name: 'Creighton King', series: 'God of Malice', author: 'Rina Kent' }
+   
 ];
 
 // Logout handler

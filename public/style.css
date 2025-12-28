@@ -84,6 +84,57 @@ body {
 #logoutBtn:hover {
   opacity: 0.8;
 }
+.center-notification {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+
+  padding: 24px 36px;
+  border-radius: 20px;
+
+  font-size: 22px;
+  font-weight: 300; /* LIGHT */
+  letter-spacing: 0.4px;
+
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  backdrop-filter: blur(6px);
+
+  opacity: 0;
+  transition: all 0.35s ease;
+
+  z-index: 10000;
+}
+
+.center-notification.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 8px;
+  height: 14px;
+  opacity: 0.9;
+
+  animation: fall 1.8s linear forwards;
+  z-index: 9999;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
 
 /* ===============================
    AUTH/LOGIN - Mobile First
@@ -882,6 +933,7 @@ body:has(#auth-container:not(.hidden)) .search-results {
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
   top: -30px;
   left: 30px;
+
 }
 
 .boyfriend-sprite.locked {
@@ -893,6 +945,8 @@ body:has(#auth-container:not(.hidden)) .search-results {
   height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
+    transform: translateX(16px);
+
 }
 
 .boyfriend-label {
@@ -995,7 +1049,8 @@ body:has(#auth-container:not(.hidden)) .search-results {
   color: white;
   padding: 8px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; 
+  align-items: center;
   align-items: center;
   cursor: default;
   user-select: none;
@@ -1151,7 +1206,7 @@ body:has(#auth-container:not(.hidden)) .search-results {
     width: 75%;              /* ⬅️ smaller than 90% */
     max-width: 360px;        /* ⬅️ phone-friendly */
     height: 50%;
-    top: 320px;              /* ⬅️ comfy under navbar */
+    top: 340px;              /* ⬅️ comfy under navbar */
     max-height: calc(100vh - 200px);
 
     left: 50%;
