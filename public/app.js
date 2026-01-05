@@ -350,7 +350,7 @@ function renderSpine(book, slot, shelfIndex) {
   spine.style.background = book.spineColor;
   spine.style.left = slot.left;
   spine.style.top = slot.top;
-  spine.style.position = "absolute"; // Ensure positioning is explicit
+  spine.style.position = "absolute";
   spine.dataset.bookId = book.firestoreId;
 
   const shortTitle = book.title.length > 15
@@ -359,18 +359,26 @@ function renderSpine(book, slot, shelfIndex) {
   spine.textContent = shortTitle;
 
   /* ===============================
-      DESKTOP DRAG & DROP
+      DESKTOP INTERACTION
   ================================ */
+  let dragStarted = false;
+  
   spine.draggable = true;
 
-  spine.addEventListener("dragstart", () => {
+  spine.addEventListener("dragstart", (e) => {
+    dragStarted = true;
     draggedBook = book;
     spine.style.opacity = "0.5";
   });
 
-  spine.addEventListener("dragend", () => {
+  spine.addEventListener("dragend", (e) => {
     spine.style.opacity = "1";
     draggedBook = null;
+    
+    // Reset after a short delay
+    setTimeout(() => {
+      dragStarted = false;
+    }, 100);
   });
 
   spine.addEventListener("dragover", e => e.preventDefault());
@@ -381,8 +389,16 @@ function renderSpine(book, slot, shelfIndex) {
     await swapBooks(draggedBook, book);
   });
 
+  // DESKTOP CLICK HANDLER
+  spine.addEventListener("click", (e) => {
+    // Only open modal if we didn't just drag
+    if (!dragStarted) {
+      openModal(book);
+    }
+  });
+
   /* ===============================
-      FIXED MOBILE DRAG & DROP
+      MOBILE TOUCH INTERACTION
   ================================ */
   let isDragging = false;
   let offsetX = 0;
@@ -392,7 +408,6 @@ function renderSpine(book, slot, shelfIndex) {
     const touch = e.touches[0];
     const rect = spine.getBoundingClientRect();
     
-    // Calculate where inside the book the user touched
     offsetX = touch.clientX - rect.left;
     offsetY = touch.clientY - rect.top;
     
@@ -400,14 +415,12 @@ function renderSpine(book, slot, shelfIndex) {
   }, { passive: true });
 
   spine.addEventListener("touchmove", e => {
-    // Only prevent default if we've actually moved enough to be "dragging"
     if (e.touches.length > 0) {
       isDragging = true;
       if (e.cancelable) e.preventDefault(); 
       
       const touch = e.touches[0];
       
-      // Move using fixed positioning to follow clientX/Y perfectly
       spine.style.position = "fixed";
       spine.style.zIndex = "1000";
       spine.style.left = (touch.clientX - offsetX) + "px";
@@ -425,12 +438,10 @@ function renderSpine(book, slot, shelfIndex) {
 
     const touch = e.changedTouches[0];
     
-    // 1. Hide the spine temporarily so we can see what's UNDER it
     spine.style.display = "none";
     const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     spine.style.display = "block";
 
-    // 2. Check if the element under the finger is another book
     const targetBookEl = dropTarget?.closest(".book");
     
     if (targetBookEl && targetBookEl.dataset.bookId !== book.firestoreId) {
@@ -439,7 +450,7 @@ function renderSpine(book, slot, shelfIndex) {
         await swapBooks(book, otherBook);
       }
     } else {
-      // 3. If no swap happened, snap back to original slot
+      // Snap back to original position
       spine.style.position = "absolute";
       spine.style.left = slot.left;
       spine.style.top = slot.top;
@@ -452,7 +463,6 @@ function renderSpine(book, slot, shelfIndex) {
 
   shelfLayer.appendChild(spine);
 }
-
 /* ===============================
    LOAD BOOKS (FIXED)
 ================================ */

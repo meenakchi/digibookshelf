@@ -19,7 +19,7 @@
     </div>
     <div class="navbar-menu">
       <a href="#" class="navbar-link">My Shelf</a>
-      <a href="tbr.html" class="navbar-link">To Read</a>
+      <a href="tbr.html" class="navbar-link">To be Read!</a>
       <a href="profile.html" class="navbar-link">Profile</a>
       <button id="logoutBtn">Logout</button>
     </div>
@@ -36,50 +36,20 @@
 
   <div id="app" class="hidden">
     <div class="main-layout">
+      <!-- Text section -->
       <div class="text-section">
         <h1 class="pixel-title">MY<br>READING<br>SHELF</h1>
         <p class="pixel-subtitle">a cozy corner for my collection</p>
-        
-        <div class="genre-legend" style="margin-top: 30px; font-size: 14px; background: rgba(255,255,255,0.4); padding: 10px; border-radius: 8px;">
-          <h3 style="margin-bottom: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px;">Genre Guide</h3>
-          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #d1b3ff; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>Fantasy</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #ffb3c6; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>Romance</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #a8d8d8; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>Mystery</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #fa9b90ff; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>Thriller</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #bde0fe; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>Sci-Fi</span>
-            </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 12px; height: 12px; background: #ffc8dd; border: 1px solid rgba(0,0,0,0.1);"></span>
-              <span>YA</span>
-            </div>
-          </div>
-        </div>
       </div>
 
+      <!-- Shelf section -->
       <div class="content-section">
         <div class="shelf-system">
-          <button id="prevShelf" class="nav-btn">PREV</button>
-          
+          <button id="prevShelf" class="nav-btn">←</button>
           <div class="shelf-wrapper">
             <div id="shelves-container"></div>
           </div>
-          
-          <button id="nextShelf" class="nav-btn">NEXT</button>
+          <button id="nextShelf" class="nav-btn">→</button>
         </div>
       </div>
     </div>

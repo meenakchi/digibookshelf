@@ -155,7 +155,7 @@ const BOOK_BOYFRIENDS = [
     name: 'Dominic Davenport', 
     series: 'King of Greed', 
     author: 'Ana Huang',
-    sprite: '/assets/dominic_d.png'
+    sprite: '/assets/dominic.png'
   },
   { 
     id: 'xavier_c', 

@@ -28,7 +28,7 @@ const REWARDS = [
 ];
 
 const BOOK_BOYFRIENDS = [
-{ id: 'malakai', name: 'Kai Azer', series: 'Powerless', author: 'Lauren Roberts'},
+  { id: 'malakai', name: 'Kai Azer', series: 'Powerless', author: 'Lauren Roberts'},
   { id: 'rhysand', name: 'Rhysand', series: 'ACOTAR', author: 'Sarah J. Maas' },
   { id: 'azriel', name: 'Azriel', series: 'ACOTAR', author: 'Sarah J. Maas' },
   { id: 'aaron_warner', name: 'Aaron Warner', series: 'Shatter Me', author: 'Tahereh Mafi' },
@@ -40,33 +40,24 @@ const BOOK_BOYFRIENDS = [
   { id: 'Jacks', name: 'Lord Jacks', series: 'Once upon a broken heart', author: 'Stephaine Garber' },
   { id: 'Zade', name: 'Zade Meadows', series: 'Haunting Adeline', author: 'H.D Carlton' },
   { id: 'percy', name: 'Percy Jackson', series: 'Percy & the olympians', author: 'Rick Riordan'},
-  
-  /* Twisted Series */
   { id: 'alex_v', name: 'Alex Volkov', series: 'Twisted Love', author: 'Ana Huang' },
   { id: 'rhys_l', name: 'Rhys Larsen', series: 'Twisted Games', author: 'Ana Huang' },
   { id: 'josh_c', name: 'Josh Chen', series: 'Twisted Hate', author: 'Ana Huang' },
   { id: 'christian_h', name: 'Christian Harper', series: 'Twisted Lies', author: 'Ana Huang' },
-
-  /* King of Sins Series */
   { id: 'dante_r', name: 'Dante Russo', series: 'King of Wrath', author: 'Ana Huang' },
   { id: 'kai_y', name: 'Kai Young', series: 'King of Pride', author: 'Ana Huang' },
   { id: 'dominic_d', name: 'Dominic Davenport', series: 'King of Greed', author: 'Ana Huang' },
   { id: 'xavier_c', name: 'Xavier Castillo', series: 'King of Sloth', author: 'Ana Huang' },
   { id: 'vuk_m', name: 'Vuk Markovic', series: 'King of Envy', author: 'Ana Huang' },
-
-  /* Requested Additions */
   { id: 'alosa_r', name: 'Riden', series: 'Daughter of the Pirate King', author: 'Tricia Levenseller' },
   { id: 'villain', name: 'The Villain (Trystan)', series: 'Assistant to the Villain', author: 'Hannah Nicole Maehrer' },
-
-  /* Popular & Underrated Picks */
-  { id: 'casteel', name: 'Casteel Da’Neer', series: 'From Blood and Ash', author: 'Jennifer L. Armentrout' },
+  { id: 'casteel', name: 'Casteel Da\'Neer', series: 'From Blood and Ash', author: 'Jennifer L. Armentrout' },
   { id: 'will_h', name: 'Will Herondale', series: 'The Infernal Devices', author: 'Cassandra Clare' },
   { id: 'raihn', name: 'Raihn', series: 'Crowns of Nyaxia', author: 'Carissa Broadbent' },
   { id: 'johnny_k', name: 'Johnny Kavanagh', series: 'Boys of Tommen', author: 'Chloe Walsh' },
   { id: 'atlas_c', name: 'Atlas Corrigan', series: 'It Ends With Us', author: 'Colleen Hoover' },
-  { id: 'wendell_b', name: 'Wendell Bambleby', series: 'Emily Wilde’s Encyclopaedia', author: 'Heather Fawcett' },
+  { id: 'wendell_b', name: 'Wendell Bambleby', series: 'Emily Wilde\'s Encyclopaedia', author: 'Heather Fawcett' },
   { id: 'creighton_k', name: 'Creighton King', series: 'God of Malice', author: 'Rina Kent' }
-   
 ];
 
 // Logout handler
@@ -123,6 +114,12 @@ document.addEventListener('mouseup', () => {
 // Icon click handlers
 document.getElementById('tbrListIcon').addEventListener('click', () => {
   openWindow('tbrWindow');
+});
+
+document.getElementById('currentReadsIcon').addEventListener('click', async () => {
+  openWindow('currentReadsWindow');
+  await loadCurrentReads();
+  populateTBRSelect();
 });
 
 document.getElementById('reviewsIcon').addEventListener('click', async () => {
@@ -221,6 +218,208 @@ window.removeFromTBR = async function(bookId) {
   await loadTBRBooks();
 };
 
+// Load current reads from Firestore
+async function loadCurrentReads() {
+  if (!currentUser) return;
+  
+  const currentReadsRef = collection(db, "users", currentUser.uid, "currentReads");
+  const snapshot = await getDocs(currentReadsRef);
+  
+  const currentReads = [];
+  snapshot.forEach(doc => {
+    currentReads.push({ id: doc.id, ...doc.data() });
+  });
+  
+  renderCurrentReads(currentReads);
+}
+
+// Render current reads list
+function renderCurrentReads(reads) {
+  const container = document.getElementById('currentReadsContainer');
+  
+  if (reads.length === 0) {
+    container.innerHTML = '<div class="empty-state">No books in progress!<br>Start reading below ✿</div>';
+    return;
+  }
+  
+  container.innerHTML = reads.map(book => {
+    const progress = Math.round((book.currentPage / book.totalPages) * 100);
+    return `
+      <div class="current-read-item">
+        <div class="tbr-item-title">${book.title}</div>
+        <div class="tbr-item-author">by ${book.author}</div>
+        
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" style="width: ${progress}%">
+            ${progress}%
+          </div>
+        </div>
+        
+        <div class="progress-text">
+          ${book.currentPage} / ${book.totalPages} pages
+        </div>
+        
+        <div class="update-progress">
+          <input 
+            type="number" 
+            id="page-${book.id}" 
+            value="${book.currentPage}"
+            min="0"
+            max="${book.totalPages}"
+            placeholder="Page #"
+          />
+          <button class="retro-btn" onclick="updateProgress('${book.id}', ${book.totalPages})">
+            Update
+          </button>
+          <button class="retro-btn" onclick="finishBook('${book.id}')">
+            Finish!
+          </button>
+          <button class="retro-btn" onclick="removeCurrentRead('${book.id}')">
+            Remove
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Populate TBR select dropdown
+function populateTBRSelect() {
+  const select = document.getElementById('tbrSelect');
+  select.innerHTML = '<option value="">-- Select a book --</option>' +
+    tbrBooks.map(book => 
+      `<option value="${book.id}" data-title="${book.title}" data-author="${book.author}">
+        ${book.title} by ${book.author}
+      </option>`
+    ).join('');
+}
+
+// Start reading a book from TBR
+window.startReading = async function() {
+  const select = document.getElementById('tbrSelect');
+  const selectedOption = select.options[select.selectedIndex];
+  const currentPage = parseInt(document.getElementById('currentPage').value) || 0;
+  const totalPages = parseInt(document.getElementById('totalPages').value);
+  
+  if (!selectedOption.value || !totalPages || totalPages < 1) {
+    alert('Please select a book and enter total pages!');
+    return;
+  }
+  
+  if (!currentUser) return;
+  
+  const bookId = selectedOption.value;
+  const title = selectedOption.dataset.title;
+  const author = selectedOption.dataset.author;
+  
+  // Add to current reads
+  await addDoc(collection(db, "users", currentUser.uid, "currentReads"), {
+    title,
+    author,
+    currentPage,
+    totalPages,
+    startedAt: new Date()
+  });
+  
+  // Remove from TBR
+  await deleteDoc(doc(db, "users", currentUser.uid, "tbr", bookId));
+  
+  // Reset form
+  document.getElementById('tbrSelect').value = '';
+  document.getElementById('currentPage').value = '';
+  document.getElementById('totalPages').value = '';
+  
+  // Reload both lists
+  await loadTBRBooks();
+  await loadCurrentReads();
+  populateTBRSelect();
+};
+
+// Add book manually to Currently Reading
+window.addManuallyToCurrentReads = async function() {
+  const title = document.getElementById('manualTitle').value.trim();
+  const author = document.getElementById('manualAuthor').value.trim();
+  const currentPage = parseInt(document.getElementById('manualCurrentPage').value) || 0;
+  const totalPages = parseInt(document.getElementById('manualTotalPages').value);
+  
+  if (!title || !author) {
+    alert('Please enter both title and author!');
+    return;
+  }
+  
+  if (!totalPages || totalPages < 1) {
+    alert('Please enter total pages!');
+    return;
+  }
+  
+  if (!currentUser) return;
+  
+  // Add to current reads
+  await addDoc(collection(db, "users", currentUser.uid, "currentReads"), {
+    title,
+    author,
+    currentPage,
+    totalPages,
+    startedAt: new Date()
+  });
+  
+  // Reset form
+  document.getElementById('manualTitle').value = '';
+  document.getElementById('manualAuthor').value = '';
+  document.getElementById('manualCurrentPage').value = '';
+  document.getElementById('manualTotalPages').value = '';
+  
+  // Reload current reads
+  await loadCurrentReads();
+  
+  alert(`"${title}" added to Currently Reading! 📖`);
+};
+
+// Update reading progress
+window.updateProgress = async function(bookId, totalPages) {
+  if (!currentUser) return;
+  
+  const newPage = parseInt(document.getElementById(`page-${bookId}`).value);
+  
+  if (isNaN(newPage) || newPage < 0 || newPage > totalPages) {
+    alert('Please enter a valid page number!');
+    return;
+  }
+  
+  await setDoc(
+    doc(db, "users", currentUser.uid, "currentReads", bookId),
+    { currentPage: newPage },
+    { merge: true }
+  );
+  
+  await loadCurrentReads();
+};
+
+// Finish reading a book
+window.finishBook = async function(bookId) {
+  if (!currentUser) return;
+  
+  const bookRef = doc(db, "users", currentUser.uid, "currentReads", bookId);
+  const bookSnap = await getDoc(bookRef);
+  
+  if (bookSnap.exists()) {
+    const bookData = bookSnap.data();
+    
+    await deleteDoc(bookRef);
+    
+    alert(`Finished reading "${bookData.title}"! 🎉\n\nYou can now add it to your main shelf!`);
+    await loadCurrentReads();
+  }
+};
+
+// Remove from current reads
+window.removeCurrentRead = async function(bookId) {
+  if (!currentUser || !confirm('Remove this book from currently reading?')) return;
+  
+  await deleteDoc(doc(db, "users", currentUser.uid, "currentReads", bookId));
+  await loadCurrentReads();
+};
+
 // Load reviews from Google Books + Open Library fallback
 async function loadReviews() {
   const reviewsContainer = document.getElementById('reviewsContainer');
@@ -228,15 +427,13 @@ async function loadReviews() {
   const totalReviewsEl = document.getElementById('totalReviews');
 
   if (tbrBooks.length === 0) {
-    reviewsContainer.innerHTML =
-      '<div class="empty-state">Add books to your TBR list first!</div>';
+    reviewsContainer.innerHTML = '<div class="empty-state">Add books to your TBR list first!</div>';
     avgRatingEl.textContent = '0.0';
     totalReviewsEl.textContent = '0';
     return;
   }
 
-  reviewsContainer.innerHTML =
-    '<div class="empty-state">Loading reviews...</div>';
+  reviewsContainer.innerHTML = '<div class="empty-state">Loading reviews...</div>';
 
   let allRatings = [];
   let allReviews = [];
@@ -408,29 +605,27 @@ async function loadRewards() {
 
   document.getElementById('currentStreak').textContent = `${streak} days`;
 
- // Replace the rendering part of your loadRewards function with this:
-const rewardsContainer = document.getElementById('rewardsContainer');
-rewardsContainer.innerHTML = REWARDS.map(reward => {
-  // Check directly against the Set you defined earlier in the function
-  const isAchieved = unlockedRewards.has(reward.id); 
-  
-  return `
-    <div class="tbr-item ${isAchieved ? '' : 'locked'}">
-      <div class="tbr-item-info">
-        <div class="tbr-item-title">
-          <img src="${reward.icon}" style="width:16px; height:16px; margin-right:5px; image-rendering:pixelated;">
-          ${reward.name}
+  const rewardsContainer = document.getElementById('rewardsContainer');
+  rewardsContainer.innerHTML = REWARDS.map(reward => {
+    const isAchieved = unlockedRewards.has(reward.id); 
+    
+    return `
+      <div class="tbr-item ${isAchieved ? '' : 'locked'}">
+        <div class="tbr-item-info">
+          <div class="tbr-item-title">
+            <img src="${reward.icon}" style="width:16px; height:16px; margin-right:5px; image-rendering:pixelated;">
+            ${reward.name}
+          </div>
+          <div class="tbr-item-author">${reward.desc}</div>
         </div>
-        <div class="tbr-item-author">${reward.desc}</div>
+        <div class="tbr-item-actions">
+          ${isAchieved 
+            ? '<span class="status-tag">Achieved!</span>' 
+            : `<span class="status-tag" style="color:#808080;">Locked</span>`}
+        </div>
       </div>
-      <div class="tbr-item-actions">
-        ${isAchieved 
-          ? '<span class="status-tag">Achieved!</span>' 
-          : `<span class="status-tag" style="color:#808080;">Locked</span>`}
-      </div>
-    </div>
-  `;
-}).join('');
+    `;
+  }).join('');
 }
 
 // Load and display book boyfriends
@@ -465,21 +660,20 @@ async function loadBoyfriends() {
   }, { merge: true });
 
   const boyfriendsContainer = document.getElementById('boyfriendsContainer');
-// Locate the loadBoyfriends function in tbr.js and update the mapping:
-boyfriendsContainer.innerHTML = BOOK_BOYFRIENDS.map(boyfriend => {
-  const isUnlocked = unlockedBoyfriends.has(boyfriend.id);
-  return `
-    <div class="tbr-item ${isUnlocked ? '' : 'locked'}">
-      <div class="tbr-item-info">
-        <div class="tbr-item-title">${boyfriend.name}</div>
-        <div class="tbr-item-author">Series: ${boyfriend.series}</div>
+  boyfriendsContainer.innerHTML = BOOK_BOYFRIENDS.map(boyfriend => {
+    const isUnlocked = unlockedBoyfriends.has(boyfriend.id);
+    return `
+      <div class="tbr-item ${isUnlocked ? '' : 'locked'}">
+        <div class="tbr-item-info">
+          <div class="tbr-item-title">${boyfriend.name}</div>
+          <div class="tbr-item-author">Series: ${boyfriend.series}</div>
+        </div>
+        <div class="tbr-item-actions">
+          ${isUnlocked 
+            ? '<span class="status-tag">Unlocked!</span>' 
+            : '<button class="retro-btn" disabled>Locked</button>'}
+        </div>
       </div>
-      <div class="tbr-item-actions">
-        ${isUnlocked 
-          ? '<span class="status-tag">Unlocked!</span>' 
-          : '<button class="retro-btn" disabled>Locked</button>'}
-      </div>
-    </div>
-  `;
-}).join('');
+    `;
+  }).join('');
 }

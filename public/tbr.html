@@ -39,6 +39,12 @@
         <span>My TBR List</span>
       </div>
 
+      <!-- Currently Reading Icon -->
+      <div class="desktop-icon clickable" id="currentReadsIcon">
+        <img src="https://win98icons.alexmeub.com/icons/png/camera-0.png" alt="Currently Reading">
+        <span>Reading Now!</span>
+      </div>
+
       <!-- Reviews Folder Icon -->
       <div class="desktop-icon clickable" id="reviewsIcon">
         <img src="https://win98icons.alexmeub.com/icons/png/directory_open_file_mydocs-4.png" alt="Reviews">
@@ -59,7 +65,7 @@
     </div>
 
     <!-- TBR List Window -->
-    <div class="retro-window active" id="tbrWindow" >
+    <div class="retro-window active" id="tbrWindow">
       <div class="window-title-bar">
         <div class="window-title">
           <img src="https://win98icons.alexmeub.com/icons/png/filepack-1.png" alt="">
@@ -88,8 +94,50 @@
       </div>
     </div>
 
+    <!-- Currently Reading Window - MANUAL ENTRY ONLY -->
+    <div class="retro-window" id="currentReadsWindow">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/camera-0.png" alt="">
+          Currently Reading
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('currentReadsWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="current-reads-list" id="currentReadsContainer">
+          <!-- Current reads will be added here -->
+        </div>
+
+        <!-- ADD MANUALLY SECTION -->
+        <div class="add-book-form" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #808080;">
+          <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #000080; display: flex; align-items: center; gap: 6px; padding-bottom: 8px; border-bottom: 1px solid #d0d0d0;">
+            Add Book to Currently Reading
+          </h3>
+          <div class="form-group">
+            <label>Book Title:</label>
+            <input type="text" id="manualTitle" placeholder="Enter book title" style="padding: 8px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080; font-family: 'Jersey 10', sans-serif; font-size: 14px; width: 100%;">
+          </div>
+          <div class="form-group">
+            <label>Author:</label>
+            <input type="text" id="manualAuthor" placeholder="Enter author name" style="padding: 8px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080; font-family: 'Jersey 10', sans-serif; font-size: 14px; width: 100%;">
+          </div>
+          <div class="form-group">
+            <label>Current Page:</label>
+            <input type="number" id="manualCurrentPage" placeholder="0" min="0" style="padding: 8px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080; font-family: 'Jersey 10', sans-serif; font-size: 14px; width: 100%;">
+          </div>
+          <div class="form-group">
+            <label>Total Pages:</label>
+            <input type="number" id="manualTotalPages" placeholder="0" min="1" style="padding: 8px; border: 2px solid; border-color: #808080 #ffffff #ffffff #808080; font-family: 'Jersey 10', sans-serif; font-size: 14px; width: 100%;">
+          </div>
+          <button class="retro-btn" onclick="addManuallyToCurrentReads()">Add to Currently Reading!</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Reviews Window -->
-    <div class="retro-window" id="reviewsWindow" >
+    <div class="retro-window" id="reviewsWindow">
       <div class="window-title-bar">
         <div class="window-title">
           <img src="https://win98icons.alexmeub.com/icons/png/directory_open-4.png" alt="">
@@ -118,60 +166,62 @@
     </div>
 
     <!-- Rewards Window -->
-    <div class="retro-window" id="rewardsWindow" >
-  <div class="window-title-bar">
-    <div class="window-title">
-      <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-0.png" alt="">
-      my rewards !
-    </div>
-    <div class="window-controls">
-      <button class="window-btn" onclick="closeWindow('rewardsWindow')">×</button>
-    </div>
-  </div>
-  <div class="window-content">
-    <div class="rewards-summary" style="margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #808080;">
-      <div class="streak-display" style="display: flex; align-items: center; gap: 10px;">
-        <img src="https://win98icons.alexmeub.com/icons/png/media_player-0.png" alt="streak" style="width: 32px; height: 32px; image-rendering: pixelated;">
-        <div class="streak-info">
-          <span class="streak-label" style="display: block; font-size: 12px; color: #666;">Current Streak</span>
-          <span class="streak-value" id="currentStreak" style="font-weight: bold;">0 days!</span>
+    <div class="retro-window" id="rewardsWindow">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/cd_drive-0.png" alt="">
+          my rewards !
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('rewardsWindow')">×</button>
+        </div>
+      </div>
+      <div class="window-content">
+        <div class="rewards-summary" style="margin-bottom: 10px; padding: 5px; border-bottom: 1px solid #808080;">
+          <div class="streak-display" style="display: flex; align-items: center; gap: 10px;">
+            <img src="https://win98icons.alexmeub.com/icons/png/media_player-0.png" alt="streak" style="width: 32px; height: 32px; image-rendering: pixelated;">
+            <div class="streak-info">
+              <span class="streak-label" style="display: block; font-size: 12px; color: #666;">Current Streak</span>
+              <span class="streak-value" id="currentStreak" style="font-weight: bold;">0 days!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tbr-list" id="rewardsContainer">
         </div>
       </div>
     </div>
 
-    <div class="tbr-list" id="rewardsContainer">
-      </div>
-  </div>
-</div>
-
     <!-- Book Boyfriends Window -->
-<div class="retro-window" id="boyfriendsWindow"  >
-  <div class="window-title-bar">
-    <div class="window-title">
-      <img src="https://win98icons.alexmeub.com/icons/png/msie2-2.png" alt="">
-      Collections!
-    </div>
-    <div class="window-controls">
-      <button class="window-btn" onclick="closeWindow('boyfriendsWindow')">×</button>
-    </div>
-  </div>
-  <div class="window-content">
-    <div class="buddies-hint">
-      <p style="font-size: 12px; color: #666; margin-bottom: 10px; padding: 5px;">
-        Unlock book boyfriends by reading books from their series!
-      </p>
-    </div>
-    <div id="boyfriendsContainer">
+    <div class="retro-window" id="boyfriendsWindow">
+      <div class="window-title-bar">
+        <div class="window-title">
+          <img src="https://win98icons.alexmeub.com/icons/png/msie2-2.png" alt="">
+          Collections!
+        </div>
+        <div class="window-controls">
+          <button class="window-btn" onclick="closeWindow('boyfriendsWindow')">×</button>
+        </div>
       </div>
+      <div class="window-content">
+        <div class="buddies-hint">
+          <p style="font-size: 12px; color: #666; margin-bottom: 10px; padding: 5px;">
+            Unlock book boyfriends by reading books from their series!
+          </p>
+        </div>
+        <div id="boyfriendsContainer">
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-  </div>
+
   <div class="decorative-stars">
     <span class="deco-star" style="top: 20%; left: 15%;">✧</span>
     <span class="deco-star" style="top: 40%; left: 85%;">✦</span>
     <span class="deco-star" style="top: 70%; left: 20%;">✧</span>
     <span class="deco-star" style="top: 25%; left: 80%;">✦</span>
   </div>
+  
   <script type="module" src="tbr.js"></script>
 </body>
 </html>
