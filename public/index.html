@@ -813,10 +813,10 @@ let isEditGenre    = false;
    or below the actual plank in your image.
    ───────────────────────────────────────── */
 const SHELF_ROWS = [
-  { topPct: 21,  leftPct: 7,  rightPct: 93 },
-  { topPct: 43,  leftPct: 7,  rightPct: 93 },
-  { topPct: 65,  leftPct: 7,  rightPct: 93 },
-  { topPct: 87,  leftPct: 7,  rightPct: 93 },
+  { topPct: 20,  leftPct: 4,  rightPct: 93 },  // row 1: starts further left
+  { topPct: 39,  leftPct: 4,  rightPct: 93 },  // row 2: moved up (was 65) + left
+  { topPct: 84,  leftPct: 7,  rightPct: 93 },
+  { topPct: 96,  leftPct: 7,  rightPct: 93 },
 ];
 
 const MAX_PER_ROW  = 14;
@@ -825,10 +825,10 @@ const BOOKS_PER_PAGE = MAX_PER_ROW * SHELF_ROWS.length;
 /* responsive spine size */
 function spineSize() {
   const w = window.innerWidth;
-  if (w < 480)  return { w: 20, h: 64 };
-  if (w < 700)  return { w: 24, h: 76 };
-  if (w < 1000) return { w: 28, h: 88 };
-  return              { w: 32, h: 100 };
+  if (w < 480)  return { w: 32, h: 90 };
+  if (w < 700)  return { w: 38, h: 105 };
+  if (w < 1000) return { w: 44, h: 120 };
+  return              { w: 52, h: 140 };
 }
 
 /* ─── AUTH ─── */
@@ -980,73 +980,47 @@ function renderShelf() {
    ───────────────────────────────────────── */
 function buildSpine(book, animIdx, SW, SH) {
   const spine = document.createElement('div');
-  spine.className   = 'book-spine';
+  spine.className = 'book-spine';
   spine.style.zIndex = String(10 + animIdx);
-
-  /* entrance animation */
-  spine.style.opacity   = '0';
+  spine.style.opacity = '0';
   setTimeout(() => {
     spine.style.transition = 'opacity 0.3s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1)';
-    spine.style.opacity   = '1';
+    spine.style.opacity = '1';
   }, 50 + animIdx * 40);
 
-  /* ─── inner clip ─── */
   const clip = document.createElement('div');
   clip.className = 'spine-clip';
 
   if (book.coverUrl) {
-    /*
-      Display cover image as a spine:
-      - img is sized SW × SH in its own coord space BEFORE rotation
-      - We rotate −90° (CCW), so:
-          screen width  = img height = SH  → fills spine width  (SW) — WAIT, wrong.
-          
-      Actually let's think clearly:
-      Spine box on screen: SW wide, SH tall.
-      We want the cover to fill it rotated.
-      
-      If we rotate the img element by −90deg:
-        before rotation: img has width=A, height=B
-        after rotation : footprint on screen = B wide × A tall
-      
-      We want: B = SW (screen width of spine) and A = SH (screen height of spine)
-      So set: img width = SH, img height = SW
-      
-      After rotate(−90deg) the element's origin stays at top-left.
-      But the visual top-left corner moves. Use:
-        transform-origin: top left
-        transform: rotate(−90deg) translateX(−100%)
-      
-      rotate(−90deg): rotates CCW around top-left.
-        → The top of the image becomes the left edge.
-        → Bottom-right corner of original ends up at top-left of screen.
-      translateX(−100%): shifts left by img.width (= SH).
-        This moves the element back so its left edge aligns with the spine's left.
-      
-      Net result: image fills the SW×SH spine box perfectly.
-    */
-    const img = document.createElement('img');
-    img.src           = book.coverUrl;
-    img.alt           = book.title;
-    img.loading       = 'lazy';
-    img.className     = 'spine-cover';
-    img.style.width   = SH + 'px';   /* becomes the spine HEIGHT on screen */
-    img.style.height  = SW + 'px';   /* becomes the spine WIDTH on screen */
+    // Draw left 20% of cover onto a canvas = real spine look
+    const canvas = document.createElement('canvas');
+    canvas.width = SW;
+    canvas.height = SH;
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.display = 'block';
+    clip.appendChild(canvas);
+
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const ctx = canvas.getContext('2d');
+      // Crop left 20% of the cover, stretch to fill spine
+      const srcW = img.naturalWidth * 0.20;
+      const srcH = img.naturalHeight;
+      ctx.drawImage(img, 0, 0, srcW, srcH, 0, 0, SW, SH);
+    };
     img.onerror = () => {
       clip.innerHTML = '';
       clip.appendChild(makeFallback(book));
     };
-    clip.appendChild(img);
+    img.src = book.coverUrl;
   } else {
     clip.appendChild(makeFallback(book));
   }
 
   spine.appendChild(clip);
-
-  /* ─── tooltip ─── */
-  const tt = buildTooltip(book);
-  spine.appendChild(tt);
-
+  spine.appendChild(buildTooltip(book));
   spine.onclick = () => openModal(book);
   return spine;
 }
@@ -1104,63 +1078,91 @@ $searchInput.addEventListener('input', () => {
   searchTimer = setTimeout(doSearch, 500);
 });
 
+/* ─── SEARCH PERFORMANCE FIX ─── */
+
+const searchCache = {};
+
+function debounce(fn, delay = 500) {
+  return (...args) => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+
 async function doSearch() {
   const q = $searchInput.value.trim();
-  if (!q) return;
+  if (!q) { closeDropdown(); return; }
+
+  // Return cached result if available
+  if (searchCache[q]) {
+    renderDropdown(searchCache[q]);
+    return;
+  }
+
   $searchDropdown.classList.remove('hidden');
   $searchDropdown.innerHTML = '<div class="sr-status">searching…</div>';
 
+  // Wait before hitting API
+  clearTimeout(searchTimer);
+  await new Promise(resolve => searchTimer = setTimeout(resolve, 600));
+
   try {
-    const res  = await fetch(
+    const res = await fetch(
       `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&fields=items(volumeInfo(title,authors,imageLinks))`
     );
-    const data = await res.json();
 
+    if (res.status === 429) {
+      $searchDropdown.innerHTML = '<div class="sr-status">Too many requests — wait a moment and try again ✦</div>';
+      return;
+    }
+
+    const data = await res.json();
     if (!data.items?.length) {
       $searchDropdown.innerHTML = '<div class="sr-status">no results found</div>';
       return;
     }
 
-    $searchDropdown.innerHTML = '';
-    data.items.forEach(item => {
-      const info   = item.volumeInfo;
-      const title  = info.title || 'Unknown';
-      const author = info.authors?.[0] || 'Unknown';
-      const cover  = (info.imageLinks?.thumbnail || '').replace('http:', 'https:');
+    searchCache[q] = data.items; // cache it
+    renderDropdown(data.items);
 
-      const row = document.createElement('div');
-      row.className = 'sr-item';
-
-      if (cover) {
-        const img = document.createElement('img');
-        img.className = 'sr-thumb';
-        img.src = cover; img.alt = title;
-        row.appendChild(img);
-      } else {
-        const ph = document.createElement('div');
-        ph.className = 'sr-thumb';
-        ph.textContent = '📚';
-        row.appendChild(ph);
-      }
-
-      const inf = document.createElement('div');
-      inf.className = 'sr-info';
-      inf.innerHTML = `<div class="sr-title">${title}</div><div class="sr-author">${author}</div>`;
-
-      const btn = document.createElement('button');
-      btn.className = 'sr-add';
-      btn.textContent = '+ ADD';
-      btn.onclick = e => {
-        e.stopPropagation();
-        openGenreSelector({ title, author, cover }, false);
-      };
-
-      row.append(inf, btn);
-      $searchDropdown.appendChild(row);
-    });
   } catch {
     $searchDropdown.innerHTML = '<div class="sr-status">search failed — try again</div>';
   }
+}
+
+function renderDropdown(items) {
+  $searchDropdown.innerHTML = '';
+  items.forEach(item => {
+    const info = item.volumeInfo;
+    const title = info.title || 'Unknown';
+    const author = info.authors?.[0] || 'Unknown';
+    const cover = (info.imageLinks?.thumbnail || '').replace('http:', 'https:');
+
+    const row = document.createElement('div');
+    row.className = 'sr-item';
+
+    if (cover) {
+      const img = document.createElement('img');
+      img.className = 'sr-thumb'; img.src = cover; img.alt = title;
+      row.appendChild(img);
+    } else {
+      const ph = document.createElement('div');
+      ph.className = 'sr-thumb'; ph.textContent = '📚';
+      row.appendChild(ph);
+    }
+
+    const inf = document.createElement('div');
+    inf.className = 'sr-info';
+    inf.innerHTML = `<div class="sr-title">${title}</div><div class="sr-author">${author}</div>`;
+
+    const btn = document.createElement('button');
+    btn.className = 'sr-add'; btn.textContent = '+ ADD';
+    btn.onclick = e => { e.stopPropagation(); openGenreSelector({ title, author, cover }, false); };
+
+    row.append(inf, btn);
+    $searchDropdown.appendChild(row);
+  });
 }
 
 function closeDropdown() {
