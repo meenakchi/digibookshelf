@@ -200,7 +200,6 @@
       padding: 12px 16px 40px;
     }
 
-    /* The frame: shelf image + absolute books on top */
     .shelf-frame {
       position: relative;
       width: 100%;
@@ -223,16 +222,13 @@
 
     /* ─────────────────────
        BOOK SPINE
-       Technique: display the cover image rotated 90° CCW
-       inside a narrow vertical box. This gives a real spine look —
-       cover art is visible but oriented like a spine on a shelf.
     ───────────────────── */
     .book-spine {
       position: absolute;
       pointer-events: auto;
       cursor: pointer;
       border-radius: 2px 3px 3px 2px;
-      overflow: visible;          /* tooltip needs to overflow */
+      overflow: visible;
       transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
       transform-origin: bottom center;
     }
@@ -248,7 +244,6 @@
       pointer-events: auto;
     }
 
-    /* Inner clip box — clips the rotated image */
     .spine-clip {
       width: 100%;
       height: 100%;
@@ -258,31 +253,46 @@
         -1px 0 2px rgba(0,0,0,0.22),
         2px 0 6px rgba(0,0,0,0.18),
         inset 2px 0 5px rgba(255,255,255,0.12);
+      position: relative;
     }
 
-    /*
-      The cover image is rendered rotated 90° CCW.
-      Before rotation the img element is sized: width=spineH, height=spineW
-      After rotation (90° CCW): its screen footprint flips to spineW × spineH
-      We shift it back into place with transform-origin + translate.
-    */
-    .spine-cover {
+    /* ── SPINE COVER via CSS background-image ── */
+    .spine-img-cover {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      border-radius: 2px 3px 3px 2px;
+    }
+
+    /* Depth gradient overlay */
+    .spine-img-cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.07) 0%,
+        rgba(0,0,0,0) 40%,
+        rgba(0,0,0,0.22) 100%);
+      border-radius: inherit;
+      z-index: 1;
+    }
+
+    /* Left-edge binding highlight */
+    .spine-img-cover::after {
+      content: '';
       position: absolute;
       top: 0; left: 0;
-      transform-origin: top left;
-      /* rotate + shift back into view:
-         after 90CCW the top-left corner stays, but the image extends left.
-         translateX(0) translateY(-100%) after rotate(−90deg) corrects it.
-         Actually: rotate(-90deg) then translateX(-100%) moves it back.
-         Final: transform: rotate(-90deg) translateX(-100%)
-         Then the image left edge aligns with spine left, bottom aligns with spine bottom.
-      */
-      transform: rotate(-90deg) translateX(-100%);
-      /* width/height set dynamically via JS */
-      object-fit: cover;
-      object-position: center top;
-      image-rendering: auto;
-      display: block;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to right,
+        rgba(255,255,255,0.28),
+        rgba(255,255,255,0));
+      border-radius: 2px 0 0 2px;
+      z-index: 2;
     }
 
     /* Fallback: colored spine with rotated title */
@@ -299,7 +309,7 @@
         2px 0 6px rgba(0,0,0,0.18);
     }
 
-    .spine-fallback::after {
+    .spine-fallback::before {
       content: '';
       position: absolute;
       inset: 0;
@@ -307,6 +317,19 @@
         rgba(255,255,255,0.2) 0%,
         transparent 35%,
         rgba(0,0,0,0.14) 100%);
+      border-radius: inherit;
+    }
+
+    .spine-fallback::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to right,
+        rgba(255,255,255,0.3),
+        rgba(255,255,255,0));
+      border-radius: 2px 0 0 2px;
     }
 
     .spine-title {
@@ -802,33 +825,48 @@ let currentBook    = null;
 let pendingBook    = null;
 let isEditGenre    = false;
 
+/* ─── SEARCH RATE LIMIT STATE ─── */
+let lastSearchTime  = 0;
+let searchTimer     = null;
+let isSearching     = false;
+const SEARCH_COOLDOWN_MS = 1200; // minimum ms between API calls
+
 /* ─────────────────────────────────────────
    SHELF LAYOUT CONFIG
-   These % values tell us where each shelf
-   plank sits in your bookshelf.png.
-   topPct  = bottom edge of books (they sit ON the plank)
-   leftPct / rightPct = horizontal extent of the shelf
-   ─────────────────────────────────────────
-   Tweak topPct values if books appear above
-   or below the actual plank in your image.
    ───────────────────────────────────────── */
 const SHELF_ROWS = [
-  { topPct: 20,  leftPct: 4,  rightPct: 93 },  // row 1: starts further left
-  { topPct: 39,  leftPct: 4,  rightPct: 93 },  // row 2: moved up (was 65) + left
-  { topPct: 84,  leftPct: 7,  rightPct: 93 },
-  { topPct: 96,  leftPct: 7,  rightPct: 93 },
+  {
+    topPct: 20,
+    leftGroup:  { startPct: 10,  maxBooks: 3  },
+    rightGroup: { endPct:   90, maxBooks: 15 }
+  },
+  {
+    topPct: 39,
+    leftGroup:  { startPct: 10,  maxBooks: 10  },
+    rightGroup: { endPct:   93, maxBooks: 10  }
+  },
+  {
+    topPct: 84,
+    leftGroup:  { startPct: 10,  maxBooks: 4  },
+    rightGroup: { endPct:   93, maxBooks: 10 }
+  },
+  {
+    topPct: 96,
+    leftGroup:  { startPct: 10,  maxBooks: 4  },
+    rightGroup: { endPct:   93, maxBooks: 10 }
+  },
 ];
 
-const MAX_PER_ROW  = 14;
-const BOOKS_PER_PAGE = MAX_PER_ROW * SHELF_ROWS.length;
+const BOOKS_PER_PAGE = SHELF_ROWS.reduce(
+  (sum, r) => sum + r.leftGroup.maxBooks + r.rightGroup.maxBooks, 0
+);
 
-/* responsive spine size */
 function spineSize() {
   const w = window.innerWidth;
-  if (w < 480)  return { w: 32, h: 90 };
-  if (w < 700)  return { w: 38, h: 105 };
-  if (w < 1000) return { w: 44, h: 120 };
-  return              { w: 52, h: 140 };
+  if (w < 480)  return { w: 18, h: 80 };
+  if (w < 700)  return { w: 22, h: 95 };
+  if (w < 1000) return { w: 26, h: 110 };
+  return              { w: 30, h: 125 };
 }
 
 /* ─── AUTH ─── */
@@ -886,8 +924,6 @@ async function loadBooks(uid) {
 
 /* ─────────────────────────────────────────
    RENDER SHELF
-   Replaces old slot-based system with a
-   clean image-overlay approach.
    ───────────────────────────────────────── */
 function renderShelf() {
   const wrapper = document.getElementById('shelfFrameWrapper');
@@ -903,7 +939,6 @@ function renderShelf() {
   document.getElementById('pageIndicator').textContent =
     `${currentPageIdx + 1} / ${totalPages}`;
 
-  /* ── shelf frame ── */
   const frame = document.createElement('div');
   frame.className = 'shelf-frame';
 
@@ -919,9 +954,6 @@ function renderShelf() {
   frame.appendChild(booksLayer);
   wrapper.appendChild(frame);
 
-  /* ── place books once image dimensions are known ── */
-  let resizeObserver;
-
   function placeBooks() {
     const imgW = frame.offsetWidth;
     const imgH = shelfImg.offsetHeight;
@@ -929,32 +961,38 @@ function renderShelf() {
 
     booksLayer.innerHTML = '';
     const { w: SW, h: SH } = spineSize();
+    const GAP = 2;
 
     let globalIdx = 0;
 
     SHELF_ROWS.forEach(row => {
-      const rowBooks = pageBooks.slice(globalIdx, globalIdx + MAX_PER_ROW);
-      globalIdx += MAX_PER_ROW;
-      if (rowBooks.length === 0) return;
+      const totalSlots = row.leftGroup.maxBooks + row.rightGroup.maxBooks;
+      const rowBooks   = pageBooks.slice(globalIdx, globalIdx + totalSlots);
+      globalIdx += totalSlots;
 
-      const areaLeft  = (row.leftPct  / 100) * imgW;
-      const areaRight = (row.rightPct / 100) * imgW;
-      const areaW     = areaRight - areaLeft;
-
-      /* centre the books in the row */
-      const totalW = rowBooks.length * SW;
-      const gap    = rowBooks.length > 1
-        ? Math.min(5, (areaW - totalW) / (rowBooks.length - 1))
-        : 0;
-      const startX = areaLeft + Math.max(0, (areaW - totalW - gap * (rowBooks.length - 1)) / 2);
-
-      /* books sit ON the plank, so bottom edge = topPct of image */
       const bottomY = (row.topPct / 100) * imgH;
       const topY    = bottomY - SH;
 
-      rowBooks.forEach((book, i) => {
-        const x  = startX + i * (SW + gap);
-        const el = buildSpine(book, i, SW, SH);
+      // ── LEFT GROUP ──
+      const leftBooks = rowBooks.slice(0, row.leftGroup.maxBooks);
+      const leftStartX = (row.leftGroup.startPct / 100) * imgW;
+      leftBooks.forEach((book, i) => {
+        const x  = leftStartX + i * (SW + GAP);
+        const el = buildSpine(book, globalIdx - totalSlots + i, SW, SH);
+        el.style.left   = x + 'px';
+        el.style.top    = topY + 'px';
+        el.style.width  = SW + 'px';
+        el.style.height = SH + 'px';
+        booksLayer.appendChild(el);
+      });
+
+      // ── RIGHT GROUP ──
+      const rightBooks  = rowBooks.slice(row.leftGroup.maxBooks);
+      const rightEndX   = (row.rightGroup.endPct / 100) * imgW;
+      const rightStartX = rightEndX - rightBooks.length * (SW + GAP) + GAP;
+      rightBooks.forEach((book, i) => {
+        const x  = rightStartX + i * (SW + GAP);
+        const el = buildSpine(book, globalIdx - totalSlots + row.leftGroup.maxBooks + i, SW, SH);
         el.style.left   = x + 'px';
         el.style.top    = topY + 'px';
         el.style.width  = SW + 'px';
@@ -966,17 +1004,17 @@ function renderShelf() {
 
   shelfImg.onload  = placeBooks;
   shelfImg.onerror = placeBooks;
-  if (shelfImg.complete) placeBooks();
+  if (shelfImg.complete && shelfImg.naturalHeight > 0) placeBooks();
 
-  resizeObserver = new ResizeObserver(placeBooks);
+  const resizeObserver = new ResizeObserver(placeBooks);
   resizeObserver.observe(frame);
 }
 
 /* ─────────────────────────────────────────
    BUILD SPINE ELEMENT
-   The spine shows the book cover rotated −90°.
-   Visually it looks like a real spine:
-   the cover art is there but oriented vertically.
+   FIX: Use an <img> element with onerror fallback instead of
+   CSS background-image, so we can detect load failures and
+   swap to the colored fallback spine automatically.
    ───────────────────────────────────────── */
 function buildSpine(book, animIdx, SW, SH) {
   const spine = document.createElement('div');
@@ -992,29 +1030,26 @@ function buildSpine(book, animIdx, SW, SH) {
   clip.className = 'spine-clip';
 
   if (book.coverUrl) {
-    // Draw left 20% of cover onto a canvas = real spine look
-    const canvas = document.createElement('canvas');
-    canvas.width = SW;
-    canvas.height = SH;
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.display = 'block';
-    clip.appendChild(canvas);
+    // Use CSS background-image but with an invisible test <img> to detect load failure
+    const coverDiv = document.createElement('div');
+    coverDiv.className = 'spine-img-cover';
+    const src = book.coverUrl.replace('http:', 'https:').replace('zoom=1', 'zoom=2');
+    coverDiv.style.backgroundImage = `url('${src}')`;
 
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const ctx = canvas.getContext('2d');
-      // Crop left 20% of the cover, stretch to fill spine
-      const srcW = img.naturalWidth * 0.20;
-      const srcH = img.naturalHeight;
-      ctx.drawImage(img, 0, 0, srcW, srcH, 0, 0, SW, SH);
+    // Hidden probe image to detect if cover actually loads
+    const probe = new Image();
+    probe.onload = () => {
+      // Cover loaded fine — nothing to do, CSS background-image handles display
     };
-    img.onerror = () => {
+    probe.onerror = () => {
+      // Cover failed to load — replace with colored fallback
+      coverDiv.remove();
       clip.innerHTML = '';
       clip.appendChild(makeFallback(book));
     };
-    img.src = book.coverUrl;
+    probe.src = src;
+
+    clip.appendChild(coverDiv);
   } else {
     clip.appendChild(makeFallback(book));
   }
@@ -1065,87 +1100,159 @@ document.getElementById('nextShelf').onclick = () => {
 
 window.addEventListener('resize', renderShelf);
 
-/* ─── SEARCH ─── */
-let searchTimer;
+/* ─────────────────────────────────────────
+   SEARCH — FIX 429 RATE LIMITING
+   Changes:
+   1. Longer debounce (1000ms for typing, instant for button)
+   2. Enforced cooldown between actual API calls
+   3. Retry with exponential backoff on 429
+   4. Open Library as fallback if Google Books keeps 429-ing
+   ───────────────────────────────────────── */
 const $searchInput    = document.getElementById('searchInput');
 const $searchDropdown = document.getElementById('searchDropdown');
+const searchCache     = {};
 
-document.getElementById('searchBtn').onclick = doSearch;
-$searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('searchBtn').onclick = () => doSearch(true);
+$searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(true); });
 $searchInput.addEventListener('input', () => {
   clearTimeout(searchTimer);
-  if (!$searchInput.value.trim()) { closeDropdown(); return; }
-  searchTimer = setTimeout(doSearch, 500);
-});
-
-/* ─── SEARCH PERFORMANCE FIX ─── */
-
-const searchCache = {};
-
-function debounce(fn, delay = 500) {
-  return (...args) => {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => fn(...args), delay);
-  };
-}
-
-
-async function doSearch() {
   const q = $searchInput.value.trim();
   if (!q) { closeDropdown(); return; }
+  // Longer debounce for typing to avoid rapid-fire requests
+  searchTimer = setTimeout(() => doSearch(false), 1000);
+});
 
-  // Return cached result if available
+async function fetchWithRetry(url, retries = 2, delayMs = 1500) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url);
+      if (res.status === 429) {
+        if (attempt < retries) {
+          // Exponential backoff: wait longer each retry
+          const wait = delayMs * Math.pow(2, attempt);
+          $searchDropdown.innerHTML = `<div class="sr-status">rate limited — retrying in ${Math.round(wait/1000)}s… (${attempt+1}/${retries})</div>`;
+          await new Promise(r => setTimeout(r, wait));
+          continue;
+        }
+        return null; // All retries exhausted
+      }
+      return res;
+    } catch(err) {
+      if (attempt === retries) throw err;
+      await new Promise(r => setTimeout(r, delayMs));
+    }
+  }
+  return null;
+}
+
+async function searchGoogleBooks(q) {
+  const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&fields=items(volumeInfo(title,authors,imageLinks))`;
+  const res = await fetchWithRetry(url);
+  if (!res) return null; // 429 even after retries
+
+  const data = await res.json();
+  return data.items || null;
+}
+
+async function searchOpenLibrary(q) {
+  // Fallback: Open Library search API (no rate limits for basic queries)
+  try {
+    const res = await fetch(
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=8&fields=title,author_name,cover_i`
+    );
+    const data = await res.json();
+    if (!data.docs?.length) return null;
+
+    // Normalise to same shape as Google Books items
+    return data.docs.map(doc => ({
+      volumeInfo: {
+        title:      doc.title || 'Unknown',
+        authors:    doc.author_name || ['Unknown'],
+        imageLinks: doc.cover_i
+          ? { thumbnail: `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` }
+          : {}
+      }
+    }));
+  } catch {
+    return null;
+  }
+}
+
+async function doSearch(immediate = false) {
+  const q = $searchInput.value.trim();
+  if (!q) { closeDropdown(); return; }
+  if (isSearching) return;
+
+  // Respect cooldown between calls
+  const now = Date.now();
+  const timeSinceLast = now - lastSearchTime;
+  if (!immediate && timeSinceLast < SEARCH_COOLDOWN_MS) {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => doSearch(false), SEARCH_COOLDOWN_MS - timeSinceLast);
+    return;
+  }
+
   if (searchCache[q]) {
     renderDropdown(searchCache[q]);
     return;
   }
 
+  isSearching = true;
+  lastSearchTime = Date.now();
   $searchDropdown.classList.remove('hidden');
   $searchDropdown.innerHTML = '<div class="sr-status">searching…</div>';
 
-  // Wait before hitting API
-  clearTimeout(searchTimer);
-  await new Promise(resolve => searchTimer = setTimeout(resolve, 600));
-
   try {
-    const res = await fetch(
-      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&fields=items(volumeInfo(title,authors,imageLinks))`
-    );
+    let items = await searchGoogleBooks(q);
 
-    if (res.status === 429) {
-      $searchDropdown.innerHTML = '<div class="sr-status">Too many requests — wait a moment and try again ✦</div>';
+    if (!items) {
+      // Google Books failed with 429 — try Open Library
+      $searchDropdown.innerHTML = '<div class="sr-status">trying backup search…</div>';
+      items = await searchOpenLibrary(q);
+    }
+
+    if (!items || !items.length) {
+      $searchDropdown.innerHTML = '<div class="sr-status">no results found ✦</div>';
       return;
     }
 
-    const data = await res.json();
-    if (!data.items?.length) {
-      $searchDropdown.innerHTML = '<div class="sr-status">no results found</div>';
-      return;
-    }
-
-    searchCache[q] = data.items; // cache it
-    renderDropdown(data.items);
+    searchCache[q] = items;
+    renderDropdown(items);
 
   } catch {
-    $searchDropdown.innerHTML = '<div class="sr-status">search failed — try again</div>';
+    $searchDropdown.innerHTML = '<div class="sr-status">search failed — check your connection</div>';
+  } finally {
+    isSearching = false;
   }
 }
 
 function renderDropdown(items) {
+  $searchDropdown.classList.remove('hidden');
   $searchDropdown.innerHTML = '';
   items.forEach(item => {
-    const info = item.volumeInfo;
-    const title = info.title || 'Unknown';
+    const info   = item.volumeInfo;
+    const title  = info.title || 'Unknown';
     const author = info.authors?.[0] || 'Unknown';
-    const cover = (info.imageLinks?.thumbnail || '').replace('http:', 'https:');
+    const cover  = (info.imageLinks?.thumbnail || '')
+      .replace('http:', 'https:')
+      .replace('zoom=1', 'zoom=2');
 
     const row = document.createElement('div');
     row.className = 'sr-item';
 
     if (cover) {
       const img = document.createElement('img');
-      img.className = 'sr-thumb'; img.src = cover; img.alt = title;
+      img.className = 'sr-thumb';
+      img.src = cover;
+      img.alt = title;
+      // If thumbnail fails, show emoji placeholder
+      img.onerror = () => { img.style.display = 'none'; ph.style.display = 'flex'; };
+      const ph = document.createElement('div');
+      ph.className = 'sr-thumb';
+      ph.textContent = '📚';
+      ph.style.display = 'none';
       row.appendChild(img);
+      row.appendChild(ph);
     } else {
       const ph = document.createElement('div');
       ph.className = 'sr-thumb'; ph.textContent = '📚';
@@ -1187,8 +1294,8 @@ function openGenreSelector(bookData, editMode) {
 
   GENRES.forEach(genre => {
     const btn = document.createElement('button');
-    btn.className       = 'genre-btn';
-    btn.textContent     = genre;
+    btn.className        = 'genre-btn';
+    btn.textContent      = genre;
     btn.style.background = GENRE_COLORS[genre];
     btn.onclick = async () => {
       closeGenre();
@@ -1318,9 +1425,9 @@ function spawnConfetti() {
   const colors = ['#ffb3c6','#d1b3ff','#bde0fe','#ffc8dd','#a8d8d8'];
   for (let i = 0; i < 30; i++) {
     const c = document.createElement('div');
-    c.className          = 'confetti-piece';
-    c.style.left         = Math.random() * 100 + 'vw';
-    c.style.background   = colors[Math.floor(Math.random() * colors.length)];
+    c.className            = 'confetti-piece';
+    c.style.left           = Math.random() * 100 + 'vw';
+    c.style.background     = colors[Math.floor(Math.random() * colors.length)];
     c.style.animationDelay = Math.random() * 0.4 + 's';
     document.body.appendChild(c);
     setTimeout(() => c.remove(), 2200);
