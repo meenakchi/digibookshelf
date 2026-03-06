@@ -22,24 +22,57 @@ import {
 const auth = getAuth();
 
 /* ===============================
-   GENRE COLOR MAPPING
+   COLOR GENERATION UTILITY
+   Uses deterministic colors based on book title
 ================================ */
-const GENRE_COLORS = {
-  'Fantasy': '#d1b3ff',      // Soft Lavender
-  'Romance': '#ffb3c6',      // Existing Pink 
-  'Mystery': '#a8d8d8',      // Mint Teal
-  'Thriller': '#fa9b90ff',     // Muted Slate
-  'Sci-Fi': '#bde0fe',       // Sky Blue
-  'Horror': '#a68a8a',       // Dusty Rose/Brown
-  'Contemporary': '#f9ebae', // Pale Butter Yellow
-  'Historical': '#e2cfb6',   // Antique Parchment
-  'Young Adult': '#ffc8dd',  // Bubblegum Pink
-  'Non-Fiction': '#d4e1cc',  // Sage Green
-  'Poetry': '#fbc4ab',       // Soft Apricota
-  'Biography': '#c0d6df',    // Steel Blue
-  'Other': '#d0d0d0'         // Light Grey
-};
-const GENRE_OPTIONS = Object.keys(GENRE_COLORS);
+
+// Simple hash function to convert string to number
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+// Generate color based on book title (same book = same color)
+function getColorFromTitle(title) {
+  const pastels = [
+    '#ffb3c6', // pink
+    '#cdb4db', // lavender
+    '#bde0fe', // sky blue
+    '#a8d8d8', // mint
+    '#ffc8dd', // rose
+    '#f9ebae', // butter yellow
+    '#e2cfb6', // parchment
+    '#c0d6df', // steel blue
+    '#fbc4ab', // apricot
+    '#d4e1cc', // sage
+    '#d1b3ff', // soft purple
+    '#fa9b90', // coral
+    '#ffcfd2', // light coral
+    '#b8e0d2', // teal
+    '#d6eadf', // mint cream
+    '#eac4d5', // mauve
+    '#f7d9c4', // peach
+    '#fae3d9', // blush
+    '#c9ada7', // dusty rose
+    '#a8dadc', // powder blue
+  ];
+  
+  const hash = hashString(title);
+  const index = hash % pastels.length;
+  return pastels[index];
+}
+
+// Main function to get spine color
+async function getSpineColorFromCover(coverUrl, title) {
+  // Use deterministic color based on title
+  // This ensures same book always gets same color
+  return getColorFromTitle(title);
+}
 
 /* ===============================
    DOM references
@@ -62,8 +95,8 @@ const nextShelfBtn = document.getElementById("nextShelf");
 let draggedBook = null;
 let touchStartBook = null;
 let longPressTimer = null;
-let swapSourceBook = null;  // GLOBAL now
-let lastTapTime = 0;        // GLOBAL now
+let swapSourceBook = null;
+let lastTapTime = 0;
 
 /* ===============================
    AUTH ACTIONS
@@ -114,6 +147,11 @@ const shelfSlots = [
   { id: 9, left: "36%", top: "25%" },
   { id: 10, left: "43%", top: "25%" },
   { id: 11, left: "50%", top: "25%" },
+  { id: 11, left: "57%", top: "25%" },
+  { id: 11, left: "64%", top: "25%" },
+  { id: 11, left: "71%", top: "25%" },
+  { id: 11, left: "78%", top: "25%" },
+  { id: 11, left: "85%", top: "25%" },
   { id: 12, left: "85%", top: "42%" },
   { id: 13, left: "78%", top: "42%" },
   { id: 14, left: "71%", top: "42%" },
@@ -140,8 +178,6 @@ let shelves = [];
 let shelfOccupiedSlots = [];
 let currentBookData = null;
 let allUserBooks = [];
-
-
 
 /* ===============================
    AUTH
@@ -207,43 +243,7 @@ prevShelfBtn.onclick = () => {
 };
 
 /* ===============================
-   GENRE SELECTOR MODAL
-================================ */
-function showGenreSelector(book) {
-  const genreModal = document.createElement('div');
-  genreModal.className = 'genre-selector-overlay';
-  genreModal.innerHTML = `
-    <div class="genre-selector-content">
-      <h2 style="margin-bottom: 20px; color: #333;">Select Genre for "${book.title}"</h2>
-      <div class="genre-grid">
-        ${GENRE_OPTIONS.map(genre => `
-          <button class="genre-option" data-genre="${genre}" style="background: ${GENRE_COLORS[genre]}">
-            ${genre}
-          </button>
-        `).join('')}
-      </div>
-      <button class="cancel-genre" style="margin-top: 20px;">Cancel</button>
-    </div>
-  `;
-  
-  document.body.appendChild(genreModal);
-  
-  genreModal.querySelectorAll('.genre-option').forEach(btn => {
-    btn.onclick = async () => {
-      const selectedGenre = btn.dataset.genre;
-      await addBookToShelf({ ...book, genre: selectedGenre });
-      genreModal.remove();
-    };
-  });
-  
-  genreModal.querySelector('.cancel-genre').onclick = () => genreModal.remove();
-  genreModal.onclick = (e) => {
-    if (e.target === genreModal) genreModal.remove();
-  };
-}
-
-/* ===============================
-   ADD BOOK (FIXED)
+   ADD BOOK - WITH COLOR EXTRACTION
 ================================ */
 async function addBookToShelf(book) {
   const user = auth.currentUser;
@@ -256,14 +256,16 @@ async function addBookToShelf(book) {
     alert("Shelf full!"); return;
   }
 
+  // Extract color from book title (deterministic)
+  const spineColor = await getSpineColorFromCover(book.cover, book.title);
+
   const newBook = {
     title: book.title || "Unknown",
     author: book.author || "Unknown",
     coverUrl: book.cover || "",
     slotId: freeSlot.id,
-    shelfIndex: Number(currentShelfIndex), // Force Number
-    spineColor: GENRE_COLORS[book.genre] || '#d0d0d0',
-    genre: book.genre || 'Other',
+    shelfIndex: Number(currentShelfIndex),
+    spineColor: spineColor,
     rating: 0
   };
 
@@ -302,21 +304,20 @@ function randomConfettiColor() {
   const colors = ["#ffb3c6", "#cdb4db", "#bde0fe", "#ffc8dd", "#a2d2ff"];
   return colors[Math.floor(Math.random() * colors.length)];
 }
+
 function clearSwapSelection() {
   swapSourceBook = null;
-
-  // Remove any swap highlight from all books
   document.querySelectorAll(".book.swap-selected").forEach(el => {
     el.classList.remove("swap-selected");
   });
 }
+
 /* ===============================
-   SWAP LOGIC (FIXED)
+   SWAP LOGIC
 ================================ */
 async function swapBooks(bookA, bookB) {
   if (!bookA || !bookB || !auth.currentUser) return;
   
-  // Guard against undefined values
   const sA = bookA.shelfIndex ?? 0;
   const sB = bookB.shelfIndex ?? 0;
   const idA = bookA.slotId;
@@ -342,6 +343,7 @@ async function swapBooks(bookA, bookB) {
     console.error("Swap failed:", err);
   }
 }
+
 function renderSpine(book, slot, shelfIndex) {
   const shelfLayer = document.getElementById(`books-layer-${shelfIndex}`);
   const spine = document.createElement("div");
@@ -375,7 +377,6 @@ function renderSpine(book, slot, shelfIndex) {
     spine.style.opacity = "1";
     draggedBook = null;
     
-    // Reset after a short delay
     setTimeout(() => {
       dragStarted = false;
     }, 100);
@@ -389,9 +390,7 @@ function renderSpine(book, slot, shelfIndex) {
     await swapBooks(draggedBook, book);
   });
 
-  // DESKTOP CLICK HANDLER
   spine.addEventListener("click", (e) => {
-    // Only open modal if we didn't just drag
     if (!dragStarted) {
       openModal(book);
     }
@@ -431,7 +430,6 @@ function renderSpine(book, slot, shelfIndex) {
 
   spine.addEventListener("touchend", async e => {
     if (!isDragging) {
-      // It was a tap, not a drag
       openModal(book);
       return;
     }
@@ -450,7 +448,6 @@ function renderSpine(book, slot, shelfIndex) {
         await swapBooks(book, otherBook);
       }
     } else {
-      // Snap back to original position
       spine.style.position = "absolute";
       spine.style.left = slot.left;
       spine.style.top = slot.top;
@@ -463,8 +460,9 @@ function renderSpine(book, slot, shelfIndex) {
 
   shelfLayer.appendChild(spine);
 }
+
 /* ===============================
-   LOAD BOOKS (FIXED)
+   LOAD BOOKS
 ================================ */
 async function loadUserBooks(uid) {
   const snapshot = await getDocs(collection(db, "users", uid, "books"));
@@ -475,12 +473,11 @@ async function loadUserBooks(uid) {
     allUserBooks.push({
       ...data,
       firestoreId: docSnap.id,
-      shelfIndex: data.shelfIndex ?? 0, // Ensure no undefined
-      slotId: data.slotId ?? 1          // Ensure no undefined
+      shelfIndex: data.shelfIndex ?? 0,
+      slotId: data.slotId ?? 1
     });
   });
 
-  // Reset layers
   shelves.forEach((_, idx) => {
     const layer = document.getElementById(`books-layer-${idx}`);
     if (layer) layer.innerHTML = '';
@@ -497,6 +494,7 @@ async function loadUserBooks(uid) {
     }
   });
 }
+
 /* ===============================
    MODAL & RATING LOGIC
 ================================ */
@@ -506,7 +504,12 @@ async function openModal(book) {
   document.getElementById("modal-title").textContent = book.title;
   document.getElementById("modal-author").textContent = book.author;
   document.getElementById("modal-cover").src = book.coverUrl || "";
-  document.getElementById("modal-genre").textContent = book.genre || "Other";
+  
+  // Show current spine color
+  const colorPreview = document.getElementById("modal-color-preview");
+  if (colorPreview) {
+    colorPreview.style.background = book.spineColor || '#d0d0d0';
+  }
 
   updateStarDisplay(book.rating || 0);
   modal.classList.remove("hidden");
@@ -537,46 +540,21 @@ async function setRating(stars) {
   updateStarDisplay(stars);
 }
 
-async function changeGenre() {
+async function changeColor() {
   if (!currentBookData || !auth.currentUser) return;
 
-  const genreModal = document.createElement('div');
-  genreModal.className = 'genre-selector-overlay';
-  genreModal.innerHTML = `
-    <div class="genre-selector-content">
-      <h2 style="margin-bottom: 20px; color: #333;">Change Genre</h2>
-      <div class="genre-grid">
-        ${GENRE_OPTIONS.map(genre => `
-          <button class="genre-option" data-genre="${genre}" style="background: ${GENRE_COLORS[genre]}">
-            ${genre}
-          </button>
-        `).join('')}
-      </div>
-      <button class="cancel-genre" style="margin-top: 20px;">Cancel</button>
-    </div>
-  `;
+  const newColor = prompt("Enter a color (e.g., #ff69b4, rgb(255,105,180), or pink):");
+  if (!newColor) return;
+
+  const user = auth.currentUser;
   
-  document.body.appendChild(genreModal);
-  
-  genreModal.querySelectorAll('.genre-option').forEach(btn => {
-    btn.onclick = async () => {
-      const newGenre = btn.dataset.genre;
-      const user = auth.currentUser;
-      
-      await updateDoc(doc(db, "users", user.uid, "books", currentBookData.firestoreId), {
-        genre: newGenre,
-        spineColor: GENRE_COLORS[newGenre]
-      });
-      
-      document.getElementById("modal-genre").textContent = newGenre;
-      genreModal.remove();
-      closeModal();
-      await loadUserBooks(user.uid);
-      showShelf(currentShelfIndex);
-    };
+  await updateDoc(doc(db, "users", user.uid, "books", currentBookData.firestoreId), {
+    spineColor: newColor
   });
   
-  genreModal.querySelector('.cancel-genre').onclick = () => genreModal.remove();
+  closeModal();
+  await loadUserBooks(user.uid);
+  showShelf(currentShelfIndex);
 }
 
 async function deleteBook() {
@@ -600,7 +578,7 @@ function closeModal() {
 
 window.setRating = setRating;
 window.closeModal = closeModal;
-window.changeGenre = changeGenre;
+window.changeColor = changeColor;
 window.deleteBook = deleteBook;
 
 modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
@@ -640,7 +618,7 @@ function renderResults(items) {
 
     const btn = document.createElement("button");
     btn.textContent = "Add to shelf";
-    btn.onclick = () => showGenreSelector({
+    btn.onclick = () => addBookToShelf({
       title: info.title,
       author: info.authors?.[0] || "Unknown",
       cover: info.imageLinks?.thumbnail || ""

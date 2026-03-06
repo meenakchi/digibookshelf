@@ -6,106 +6,1328 @@
   <link href="https://fonts.googleapis.com/css2?family=Jersey+10&display=swap" rel="stylesheet">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#f4fffa">
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bookies</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Jersey 10', sans-serif;
+      background: #f4fffa;
+      color: #333;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ─────────────────────
+       NAVBAR
+    ───────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 60px;
+      background: #f4fffa;
+      border-bottom: 2px solid rgba(168,216,216,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 1000;
+      gap: 12px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .nav-logo img { height: 32px; image-rendering: pixelated; }
+    .nav-logo span { font-size: 24px; color: #333; letter-spacing: 1px; }
+
+    .nav-search {
+      flex: 1;
+      max-width: 420px;
+      display: flex;
+      border: 2px solid #a8d8d8;
+      border-radius: 8px;
+      overflow: hidden;
+      background: white;
+    }
+
+    .nav-search input {
+      flex: 1;
+      border: none;
+      padding: 8px 14px;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 16px;
+      outline: none;
+      background: transparent;
+      color: #333;
+      min-width: 0;
+    }
+
+    .nav-search input::placeholder { color: #aaa; }
+
+    .nav-search button {
+      background: #a8d8d8;
+      border: none;
+      border-left: 2px solid #a8d8d8;
+      padding: 8px 16px;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      color: #333;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .nav-search button:hover { background: #8fcece; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .nav-links a, #logoutBtn {
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 18px;
+      color: #333;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+
+    .nav-links a:hover, #logoutBtn:hover { background: #caf2fb; }
+
+    /* ─────────────────────
+       AUTH
+    ───────────────────── */
+    #auth-container {
+      position: relative;
+      width: 90%;
+      max-width: 600px;
+      margin: 80px auto 0;
+    }
+
+    .login-bg { width: 100%; image-rendering: pixelated; display: block; }
+
+    .pixel-input {
+      position: absolute;
+      border: none;
+      background: rgba(255,255,255,0.3);
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 12px;
+      padding: 4px;
+      outline: none;
+      color: #333;
+    }
+
+    .pixel-input::placeholder { color: rgba(0,0,0,0.3); }
+    .pixel-input.email    { top: 35%; left: 35%; width: 25%; }
+    .pixel-input.password { top: 42%; left: 48%; width: 18%; }
+
+    .pixel-btn {
+      position: absolute;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 10px;
+      padding: 6px 12px;
+    }
+
+    .pixel-btn.login    { top: 57%; left: 28%; width: 12%; height: 4%; }
+    .pixel-btn.register { top: 57%; left: 57%; width: 14%; height: 4%; }
+
+    .auth-msg {
+      position: absolute;
+      top: 54%; left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    /* ─────────────────────
+       APP WRAPPER
+    ───────────────────── */
+    #app {
+      padding-top: 70px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero-header {
+      text-align: center;
+      padding: 24px 20px 8px;
+    }
+
+    .hero-header h1 {
+      font-size: clamp(32px, 5vw, 60px);
+      color: #333;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    .hero-header p {
+      font-size: 16px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    /* ─────────────────────
+       SHELF SECTION
+    ───────────────────── */
+    .shelf-section {
+      width: 100%;
+      max-width: 900px;
+      padding: 12px 16px 40px;
+    }
+
+    /* The frame: shelf image + absolute books on top */
+    .shelf-frame {
+      position: relative;
+      width: 100%;
+      user-select: none;
+    }
+
+    .shelf-image {
+      width: 100%;
+      display: block;
+      image-rendering: pixelated;
+    }
+
+    .books-layer {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* ─────────────────────
+       BOOK SPINE
+       Technique: display the cover image rotated 90° CCW
+       inside a narrow vertical box. This gives a real spine look —
+       cover art is visible but oriented like a spine on a shelf.
+    ───────────────────── */
+    .book-spine {
+      position: absolute;
+      pointer-events: auto;
+      cursor: pointer;
+      border-radius: 2px 3px 3px 2px;
+      overflow: visible;          /* tooltip needs to overflow */
+      transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1);
+      transform-origin: bottom center;
+    }
+
+    .book-spine:hover {
+      transform: translateY(-16px) scale(1.07);
+      z-index: 200 !important;
+    }
+
+    .book-spine:hover .spine-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0px);
+      pointer-events: auto;
+    }
+
+    /* Inner clip box — clips the rotated image */
+    .spine-clip {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 2px 3px 3px 2px;
+      box-shadow:
+        -1px 0 2px rgba(0,0,0,0.22),
+        2px 0 6px rgba(0,0,0,0.18),
+        inset 2px 0 5px rgba(255,255,255,0.12);
+    }
+
+    /*
+      The cover image is rendered rotated 90° CCW.
+      Before rotation the img element is sized: width=spineH, height=spineW
+      After rotation (90° CCW): its screen footprint flips to spineW × spineH
+      We shift it back into place with transform-origin + translate.
+    */
+    .spine-cover {
+      position: absolute;
+      top: 0; left: 0;
+      transform-origin: top left;
+      /* rotate + shift back into view:
+         after 90CCW the top-left corner stays, but the image extends left.
+         translateX(0) translateY(-100%) after rotate(−90deg) corrects it.
+         Actually: rotate(-90deg) then translateX(-100%) moves it back.
+         Final: transform: rotate(-90deg) translateX(-100%)
+         Then the image left edge aligns with spine left, bottom aligns with spine bottom.
+      */
+      transform: rotate(-90deg) translateX(-100%);
+      /* width/height set dynamically via JS */
+      object-fit: cover;
+      object-position: center top;
+      image-rendering: auto;
+      display: block;
+    }
+
+    /* Fallback: colored spine with rotated title */
+    .spine-fallback {
+      width: 100%;
+      height: 100%;
+      border-radius: 2px 3px 3px 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow:
+        -1px 0 2px rgba(0,0,0,0.22),
+        2px 0 6px rgba(0,0,0,0.18);
+    }
+
+    .spine-fallback::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.2) 0%,
+        transparent 35%,
+        rgba(0,0,0,0.14) 100%);
+    }
+
+    .spine-title {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 7.5px;
+      color: rgba(255,255,255,0.93);
+      font-family: 'Jersey 10', sans-serif;
+      padding: 3px 0;
+      max-height: 85%;
+      overflow: hidden;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+    }
+
+    /* ─────────────────────
+       SPINE TOOLTIP
+    ───────────────────── */
+    .spine-tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%) translateY(8px);
+      background: #f4fffa;
+      border: 2px solid #a8d8d8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      width: 155px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s, transform 0.15s;
+      z-index: 300;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .spine-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #a8d8d8;
+    }
+
+    .tt-title  { font-size: 13px; color: #333; line-height: 1.3; margin-bottom: 3px; }
+    .tt-author { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .tt-rating { font-size: 14px; color: #f4a0b8; letter-spacing: 1px; margin-bottom: 5px; }
+
+    .tt-remove {
+      font-size: 11px;
+      color: #e07070;
+      background: none;
+      border: 1px solid rgba(224,112,112,0.35);
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Jersey 10', sans-serif;
+      padding: 2px 8px;
+      pointer-events: auto;
+      transition: background 0.1s;
+    }
+
+    .tt-remove:hover { background: rgba(224,112,112,0.12); }
+
+    /* ─────────────────────
+       SHELF NAV
+    ───────────────────── */
+    .shelf-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      background: #f4fffa;
+      border: 3px solid #a8d8d8;
+      color: #a8d8d8;
+      font-size: 20px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 4px 0 #d4f5e9;
+      font-family: 'Jersey 10', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .nav-btn:hover  { background: #a8d8d8; color: white; }
+    .nav-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    .page-indicator { font-size: 16px; color: #888; min-width: 50px; text-align: center; }
+
+    /* ─────────────────────
+       SEARCH DROPDOWN
+    ───────────────────── */
+    .search-dropdown {
+      position: fixed;
+      top: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(480px, 88vw);
+      background: #f4fffa;
+      border: 2px solid #a8d8d8;
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.1);
+      z-index: 999;
+      max-height: 370px;
+      overflow-y: auto;
+    }
+
+    .sr-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(168,216,216,0.25);
+      transition: background 0.1s;
+    }
+
+    .sr-item:last-child { border-bottom: none; }
+    .sr-item:hover { background: #e8faf5; }
+
+    .sr-thumb {
+      width: 34px; height: 50px;
+      object-fit: cover;
+      border-radius: 3px;
+      flex-shrink: 0;
+      background: #d4f5e9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+
+    .sr-info { flex: 1; min-width: 0; }
+    .sr-title  { font-size: 15px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sr-author { font-size: 12px; color: #888; }
+
+    .sr-add {
+      background: #a8d8d8;
+      border: 1px solid #88c4c4;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .sr-add:hover { background: #8fcece; }
+    .sr-status { padding: 16px; text-align: center; color: #888; font-size: 14px; }
+
+    /* ─────────────────────
+       GENRE MODAL
+    ───────────────────── */
+    .genre-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2000; padding: 20px;
+    }
+
+    .genre-modal {
+      background: #f4fffa;
+      border: 3px solid #a8d8d8;
+      border-radius: 16px;
+      padding: 26px 20px;
+      width: min(400px, 100%);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    }
+
+    .genre-modal h3 { font-size: 22px; text-align: center; margin-bottom: 16px; color: #333; }
+
+    .genre-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .genre-btn {
+      padding: 10px 6px;
+      border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 8px;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: center;
+      color: #333;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+
+    .genre-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.13); }
+
+    .genre-cancel {
+      display: block; width: 100%; padding: 10px;
+      background: transparent; border: 2px solid #a8d8d8;
+      border-radius: 8px; font-family: 'Jersey 10', sans-serif;
+      font-size: 16px; cursor: pointer; color: #888;
+    }
+
+    /* ─────────────────────
+       BOOK MODAL
+    ───────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2000; padding: 20px;
+    }
+
+    .modal-card {
+      position: relative;
+      background: linear-gradient(135deg, #fff5f5 0%, #f4fffa 100%);
+      border: 3px solid #ffd1dc;
+      border-radius: 20px;
+      padding: 26px 22px;
+      width: min(560px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    .modal-duck {
+      position: absolute;
+      top: -52px; right: 12px;
+      width: 58px;
+      image-rendering: pixelated;
+      cursor: pointer;
+      transform: scaleX(-1);
+      animation: duckBounce 2.5s ease-in-out infinite;
+    }
+
+    @keyframes duckBounce {
+      0%,100% { transform: scaleX(-1) translateY(0); }
+      50%      { transform: scaleX(-1) translateY(-10px); }
+    }
+
+    .modal-layout { display: flex; gap: 20px; }
+
+    .modal-cover-img {
+      width: 130px; height: 195px;
+      object-fit: cover;
+      border-radius: 6px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+      flex-shrink: 0;
+    }
+
+    .modal-info { flex: 1; }
+
+    .modal-info h2 { font-size: 22px; color: #333; margin-bottom: 4px; line-height: 1.2; }
+    .modal-author  { font-size: 15px; color: #888; margin-bottom: 14px; }
+
+    .modal-row {
+      display: flex; align-items: center;
+      gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+
+    .modal-lbl { font-size: 14px; color: #888; }
+
+    .modal-val {
+      font-size: 14px;
+      background: rgba(168,216,216,0.2);
+      padding: 3px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(168,216,216,0.4);
+    }
+
+    .edit-btn {
+      padding: 3px 10px;
+      background: #a8d8d8;
+      border: 1px solid #88c4c4;
+      border-radius: 6px;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .stars-row { display: flex; gap: 4px; }
+
+    .star {
+      font-size: 28px;
+      cursor: pointer;
+      color: #ffb6c1;
+      transition: all 0.15s;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .star:active { transform: scale(1.3); }
+    .star.filled { color: #ff1493; filter: drop-shadow(0 2px 6px rgba(255,20,147,0.35)); }
+
+    .delete-btn {
+      display: block; width: 100%;
+      margin-top: 18px; padding: 10px;
+      background: transparent;
+      border: 2px solid #ff6b6b;
+      border-radius: 10px;
+      color: #ff6b6b;
+      font-family: 'Jersey 10', sans-serif;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .delete-btn:hover { background: rgba(255,107,107,0.1); }
+    .modal-hint { font-size: 12px; color: #bbb; text-align: center; margin-top: 12px; }
+
+    /* ─────────────────────
+       NOTIF + CONFETTI
+    ───────────────────── */
+    .notif {
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%,-50%) scale(0.9);
+      background: white; border: 2px solid #a8d8d8;
+      border-radius: 16px; padding: 20px 32px;
+      font-size: 18px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+      opacity: 0; transition: all 0.3s;
+      z-index: 9999; pointer-events: none;
+    }
+
+    .notif.show { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+
+    .confetti-piece {
+      position: fixed; width: 8px; height: 12px;
+      top: -10px; border-radius: 2px;
+      animation: confettiFall 1.8s linear forwards;
+      z-index: 9998;
+    }
+
+    @keyframes confettiFall {
+      0%   { transform: translateY(0) rotate(0); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ─────────────────────
+       RESPONSIVE
+    ───────────────────── */
+    @media (max-width: 600px) {
+      #navbar { padding: 0 10px; gap: 8px; }
+      .nav-logo span { display: none; }
+      .hide-mobile { display: none !important; }
+      .genre-grid { grid-template-columns: repeat(2, 1fr); }
+      .modal-layout { flex-direction: column; align-items: center; }
+      .shelf-section { padding: 8px 8px 32px; }
+    }
+
+    @media (min-width: 900px) {
+      .shelf-section { max-width: 800px; }
+    }
+
+    @media (min-width: 1200px) {
+      .shelf-section { max-width: 960px; }
+    }
+  </style>
 </head>
 <body>
-  <nav id="navbar" class="navbar hidden">
-    <div class="navbar-brand">
-      <img src="/assets/blueberry.png" alt="Booknooks" class="navbar-logo" />
-    </div>
-    <div class="navbar-menu">
-      <a href="#" class="navbar-link">My Shelf</a>
-      <a href="tbr.html" class="navbar-link">To be Read!</a>
-      <a href="profile.html" class="navbar-link">Profile</a>
-      <button id="logoutBtn">Logout</button>
-    </div>
-  </nav>
 
-  <div id="auth-container" class="pixel-login">
-    <img src="/assets/login.gif" class="login-bg" />
-    <input id="email" class="pixel-input email" type="email" placeholder="Email" />
-    <input id="password" class="pixel-input password" type="password" placeholder="Password" />
-    <button id="loginBtn" class="pixel-btn login">LOGIN</button>
-    <button id="registerBtn" class="pixel-btn register">REGISTER</button>
-    <p id="authMsg" class="auth-msg"></p>
-  </div>
-
-  <div id="app" class="hidden">
-    <div class="main-layout">
-      <!-- Text section -->
-      <div class="text-section">
-        <h1 class="pixel-title">MY<br>READING<br>SHELF</h1>
-        <p class="pixel-subtitle">a cozy corner for my collection</p>
-      </div>
-
-      <!-- Shelf section -->
-      <div class="content-section">
-        <div class="shelf-system">
-          <button id="prevShelf" class="nav-btn">←</button>
-          <div class="shelf-wrapper">
-            <div id="shelves-container"></div>
-          </div>
-          <button id="nextShelf" class="nav-btn">→</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="search-bar">
-    <input id="searchInput" type="text" placeholder="Search for a book..." />
+<!-- NAVBAR -->
+<nav id="navbar" class="hidden">
+  <a class="nav-logo" href="#">
+    <img src="/assets/blueberry.png" alt="Bookies">
+    <span>bookies</span>
+  </a>
+  <div class="nav-search">
+    <input type="text" id="searchInput" placeholder="Search for a book…" autocomplete="off" />
     <button id="searchBtn">SEARCH</button>
   </div>
+  <div class="nav-links">
+    <a href="tbr.html" class="hide-mobile">TBR!</a>
+    <a href="profile.html" class="hide-mobile">Profile!</a>
+    <button id="logoutBtn">Logout</button>
+  </div>
+</nav>
 
-  <div id="searchResults" class="search-results"></div>
+<!-- SEARCH DROPDOWN -->
+<div class="search-dropdown hidden" id="searchDropdown"></div>
 
-  <div id="modal" class="modal-overlay hidden">
-    <div class="modal-content">
-      <img src="/assets/chick.gif" class="modal-duck" onclick="closeModal()" alt="Close" />
-      
-      <div class="modal-layout">
-        <div class="modal-cover-side">
-          <img id="modal-cover" class="modal-book-cover" src="" alt="Book cover" />
-        </div>
+<!-- AUTH -->
+<div id="auth-container">
+  <img src="/assets/login.gif" class="login-bg" />
+  <input id="email"    class="pixel-input email"    type="email"    placeholder="Email" />
+  <input id="password" class="pixel-input password" type="password" placeholder="Password" />
+  <button id="loginBtn"    class="pixel-btn login">LOGIN</button>
+  <button id="registerBtn" class="pixel-btn register">REGISTER</button>
+  <p id="authMsg" class="auth-msg"></p>
+</div>
 
-        <div class="modal-info-side">
-          <h2 id="modal-title">Book Title</h2>
-          <p id="modal-author" class="author-text">Written by Author Name</p>
-          
-          <div class="detail-item">
-            <span class="bullet">»</span>
-            <span class="detail-label">Genre:</span>
-            <span id="modal-genre" class="detail-value">Fiction</span>
-            <button onclick="changeGenre()" style="margin-left: 10px; padding: 4px 8px; font-family: 'Jersey 10', sans-serif; background: #a8d8d8; border: 1px solid #88b8b8; border-radius: 4px; cursor: pointer;">EDIT</button>
-          </div>
-
-          <div class="detail-item">
-            <span class="bullet">»</span>
-            <span class="detail-label">Rating:</span>
-            <div class="stars">
-              <span id="star-1" class="star" onclick="setRating(1)">☆</span>
-              <span id="star-2" class="star" onclick="setRating(2)">☆</span>
-              <span id="star-3" class="star" onclick="setRating(3)">☆</span>
-              <span id="star-4" class="star" onclick="setRating(4)">☆</span>
-              <span id="star-5" class="star" onclick="setRating(5)">☆</span>
-            </div>
-          </div>
-
-          <div class="detail-item" style="margin-top: 20px; justify-content: center;">
-            <button onclick="deleteBook()" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'Jersey 10', sans-serif; font-size: 18px;">
-                REMOVE BOOK
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="close-hint">CLICK OUTSIDE TO CLOSE | DRAG TO MOVE</div>
-    </div>
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+  <div class="hero-header">
+    <h1>MY READING SHELF</h1>
+    <p>a cozy corner for my collection</p>
   </div>
 
-  <script type="module" src="app.js"></script>
+  <div class="shelf-section">
+    <div id="shelfFrameWrapper"></div>
+    <div class="shelf-nav">
+      <button class="nav-btn" id="prevShelf">←</button>
+      <span class="page-indicator" id="pageIndicator">1 / 1</span>
+      <button class="nav-btn" id="nextShelf">→</button>
+    </div>
+  </div>
+</div>
+
+<!-- GENRE SELECTOR -->
+<div class="genre-overlay hidden" id="genreOverlay">
+  <div class="genre-modal">
+    <h3>what genre is this? ✿</h3>
+    <div class="genre-grid" id="genreGrid"></div>
+    <button class="genre-cancel" id="genreCancel">cancel</button>
+  </div>
+</div>
+
+<!-- BOOK MODAL -->
+<div class="modal-overlay hidden" id="bookModal">
+  <div class="modal-card" id="modalCard">
+    <img src="/assets/chick.gif" class="modal-duck" id="modalDuck" alt="close">
+    <div class="modal-layout">
+      <img id="modalCover" class="modal-cover-img" src="" alt="">
+      <div class="modal-info">
+        <h2 id="modalTitle"></h2>
+        <p class="modal-author" id="modalAuthor"></p>
+        <div class="modal-row">
+          <span class="modal-lbl">Genre</span>
+          <span class="modal-val" id="modalGenre"></span>
+          <button class="edit-btn" id="editGenreBtn">EDIT</button>
+        </div>
+        <div class="modal-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+          <span class="modal-lbl">Rating</span>
+          <div class="stars-row">
+            <span class="star" data-star="1" id="star-1">★</span>
+            <span class="star" data-star="2" id="star-2">★</span>
+            <span class="star" data-star="3" id="star-3">★</span>
+            <span class="star" data-star="4" id="star-4">★</span>
+            <span class="star" data-star="5" id="star-5">★</span>
+          </div>
+        </div>
+        <button class="delete-btn" id="deleteBookBtn">REMOVE FROM SHELF</button>
+      </div>
+    </div>
+    <p class="modal-hint">click outside or the duck to close ✦</p>
+  </div>
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notif"></div>
+
+<script type="module">
+import { db } from "./firebase.js";
+import {
+  collection, addDoc, getDocs, updateDoc, doc, deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth, signOut, onAuthStateChanged,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const auth = getAuth();
+
+/* ─── GENRE CONFIG ─── */
+const GENRE_COLORS = {
+  'Fantasy':      '#d1b3ff',
+  'Romance':      '#ffb3c6',
+  'Mystery':      '#a8d8d8',
+  'Thriller':     '#fa9b90',
+  'Sci-Fi':       '#bde0fe',
+  'Horror':       '#a68a8a',
+  'Contemporary': '#f9ebae',
+  'Historical':   '#e2cfb6',
+  'Young Adult':  '#ffc8dd',
+  'Non-Fiction':  '#d4e1cc',
+  'Poetry':       '#fbc4ab',
+  'Biography':    '#c0d6df',
+  'Other':        '#d0d0d0'
+};
+const GENRES = Object.keys(GENRE_COLORS);
+
+/* ─── STATE ─── */
+let allBooks       = [];
+let currentPageIdx = 0;
+let currentBook    = null;
+let pendingBook    = null;
+let isEditGenre    = false;
+
+/* ─────────────────────────────────────────
+   SHELF LAYOUT CONFIG
+   These % values tell us where each shelf
+   plank sits in your bookshelf.png.
+   topPct  = bottom edge of books (they sit ON the plank)
+   leftPct / rightPct = horizontal extent of the shelf
+   ─────────────────────────────────────────
+   Tweak topPct values if books appear above
+   or below the actual plank in your image.
+   ───────────────────────────────────────── */
+const SHELF_ROWS = [
+  { topPct: 21,  leftPct: 7,  rightPct: 93 },
+  { topPct: 43,  leftPct: 7,  rightPct: 93 },
+  { topPct: 65,  leftPct: 7,  rightPct: 93 },
+  { topPct: 87,  leftPct: 7,  rightPct: 93 },
+];
+
+const MAX_PER_ROW  = 14;
+const BOOKS_PER_PAGE = MAX_PER_ROW * SHELF_ROWS.length;
+
+/* responsive spine size */
+function spineSize() {
+  const w = window.innerWidth;
+  if (w < 480)  return { w: 20, h: 64 };
+  if (w < 700)  return { w: 24, h: 76 };
+  if (w < 1000) return { w: 28, h: 88 };
+  return              { w: 32, h: 100 };
+}
+
+/* ─── AUTH ─── */
+document.getElementById('loginBtn').onclick = async () => {
+  try {
+    await signInWithEmailAndPassword(auth,
+      document.getElementById('email').value.trim(),
+      document.getElementById('password').value.trim());
+  } catch(e) {
+    setAuthMsg('Login failed: ' + e.message, 'red');
+  }
+};
+
+document.getElementById('registerBtn').onclick = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth,
+      document.getElementById('email').value.trim(),
+      document.getElementById('password').value.trim());
+  } catch(e) {
+    setAuthMsg('Register failed: ' + e.message, 'red');
+  }
+};
+
+document.getElementById('logoutBtn').onclick = () => signOut(auth);
+
+function setAuthMsg(msg, color) {
+  const el = document.getElementById('authMsg');
+  el.textContent  = msg;
+  el.style.color  = color;
+}
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    document.getElementById('auth-container').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('navbar').classList.remove('hidden');
+    await loadBooks(user.uid);
+  } else {
+    document.getElementById('auth-container').classList.remove('hidden');
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('navbar').classList.add('hidden');
+    allBooks = [];
+    renderShelf();
+  }
+});
+
+/* ─── LOAD BOOKS FROM FIRESTORE ─── */
+async function loadBooks(uid) {
+  const snap = await getDocs(collection(db, 'users', uid, 'books'));
+  allBooks = [];
+  snap.forEach(d => allBooks.push({ ...d.data(), firestoreId: d.id }));
+  allBooks.sort((a, b) => (a.addedAt?.seconds || 0) - (b.addedAt?.seconds || 0));
+  renderShelf();
+}
+
+/* ─────────────────────────────────────────
+   RENDER SHELF
+   Replaces old slot-based system with a
+   clean image-overlay approach.
+   ───────────────────────────────────────── */
+function renderShelf() {
+  const wrapper = document.getElementById('shelfFrameWrapper');
+  wrapper.innerHTML = '';
+
+  const totalPages = Math.max(1, Math.ceil(allBooks.length / BOOKS_PER_PAGE));
+  currentPageIdx   = Math.min(currentPageIdx, totalPages - 1);
+  const pageBooks  = allBooks.slice(
+    currentPageIdx * BOOKS_PER_PAGE,
+    (currentPageIdx + 1) * BOOKS_PER_PAGE
+  );
+
+  document.getElementById('pageIndicator').textContent =
+    `${currentPageIdx + 1} / ${totalPages}`;
+
+  /* ── shelf frame ── */
+  const frame = document.createElement('div');
+  frame.className = 'shelf-frame';
+
+  const shelfImg = document.createElement('img');
+  shelfImg.src       = '/assets/bookshelf.png';
+  shelfImg.className = 'shelf-image';
+  shelfImg.alt       = 'Bookshelf';
+
+  const booksLayer = document.createElement('div');
+  booksLayer.className = 'books-layer';
+
+  frame.appendChild(shelfImg);
+  frame.appendChild(booksLayer);
+  wrapper.appendChild(frame);
+
+  /* ── place books once image dimensions are known ── */
+  let resizeObserver;
+
+  function placeBooks() {
+    const imgW = frame.offsetWidth;
+    const imgH = shelfImg.offsetHeight;
+    if (!imgW || !imgH) return;
+
+    booksLayer.innerHTML = '';
+    const { w: SW, h: SH } = spineSize();
+
+    let globalIdx = 0;
+
+    SHELF_ROWS.forEach(row => {
+      const rowBooks = pageBooks.slice(globalIdx, globalIdx + MAX_PER_ROW);
+      globalIdx += MAX_PER_ROW;
+      if (rowBooks.length === 0) return;
+
+      const areaLeft  = (row.leftPct  / 100) * imgW;
+      const areaRight = (row.rightPct / 100) * imgW;
+      const areaW     = areaRight - areaLeft;
+
+      /* centre the books in the row */
+      const totalW = rowBooks.length * SW;
+      const gap    = rowBooks.length > 1
+        ? Math.min(5, (areaW - totalW) / (rowBooks.length - 1))
+        : 0;
+      const startX = areaLeft + Math.max(0, (areaW - totalW - gap * (rowBooks.length - 1)) / 2);
+
+      /* books sit ON the plank, so bottom edge = topPct of image */
+      const bottomY = (row.topPct / 100) * imgH;
+      const topY    = bottomY - SH;
+
+      rowBooks.forEach((book, i) => {
+        const x  = startX + i * (SW + gap);
+        const el = buildSpine(book, i, SW, SH);
+        el.style.left   = x + 'px';
+        el.style.top    = topY + 'px';
+        el.style.width  = SW + 'px';
+        el.style.height = SH + 'px';
+        booksLayer.appendChild(el);
+      });
+    });
+  }
+
+  shelfImg.onload  = placeBooks;
+  shelfImg.onerror = placeBooks;
+  if (shelfImg.complete) placeBooks();
+
+  resizeObserver = new ResizeObserver(placeBooks);
+  resizeObserver.observe(frame);
+}
+
+/* ─────────────────────────────────────────
+   BUILD SPINE ELEMENT
+   The spine shows the book cover rotated −90°.
+   Visually it looks like a real spine:
+   the cover art is there but oriented vertically.
+   ───────────────────────────────────────── */
+function buildSpine(book, animIdx, SW, SH) {
+  const spine = document.createElement('div');
+  spine.className   = 'book-spine';
+  spine.style.zIndex = String(10 + animIdx);
+
+  /* entrance animation */
+  spine.style.opacity   = '0';
+  setTimeout(() => {
+    spine.style.transition = 'opacity 0.3s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1)';
+    spine.style.opacity   = '1';
+  }, 50 + animIdx * 40);
+
+  /* ─── inner clip ─── */
+  const clip = document.createElement('div');
+  clip.className = 'spine-clip';
+
+  if (book.coverUrl) {
+    /*
+      Display cover image as a spine:
+      - img is sized SW × SH in its own coord space BEFORE rotation
+      - We rotate −90° (CCW), so:
+          screen width  = img height = SH  → fills spine width  (SW) — WAIT, wrong.
+          
+      Actually let's think clearly:
+      Spine box on screen: SW wide, SH tall.
+      We want the cover to fill it rotated.
+      
+      If we rotate the img element by −90deg:
+        before rotation: img has width=A, height=B
+        after rotation : footprint on screen = B wide × A tall
+      
+      We want: B = SW (screen width of spine) and A = SH (screen height of spine)
+      So set: img width = SH, img height = SW
+      
+      After rotate(−90deg) the element's origin stays at top-left.
+      But the visual top-left corner moves. Use:
+        transform-origin: top left
+        transform: rotate(−90deg) translateX(−100%)
+      
+      rotate(−90deg): rotates CCW around top-left.
+        → The top of the image becomes the left edge.
+        → Bottom-right corner of original ends up at top-left of screen.
+      translateX(−100%): shifts left by img.width (= SH).
+        This moves the element back so its left edge aligns with the spine's left.
+      
+      Net result: image fills the SW×SH spine box perfectly.
+    */
+    const img = document.createElement('img');
+    img.src           = book.coverUrl;
+    img.alt           = book.title;
+    img.loading       = 'lazy';
+    img.className     = 'spine-cover';
+    img.style.width   = SH + 'px';   /* becomes the spine HEIGHT on screen */
+    img.style.height  = SW + 'px';   /* becomes the spine WIDTH on screen */
+    img.onerror = () => {
+      clip.innerHTML = '';
+      clip.appendChild(makeFallback(book));
+    };
+    clip.appendChild(img);
+  } else {
+    clip.appendChild(makeFallback(book));
+  }
+
+  spine.appendChild(clip);
+
+  /* ─── tooltip ─── */
+  const tt = buildTooltip(book);
+  spine.appendChild(tt);
+
+  spine.onclick = () => openModal(book);
+  return spine;
+}
+
+function makeFallback(book) {
+  const fb  = document.createElement('div');
+  fb.className         = 'spine-fallback';
+  fb.style.background  = book.spineColor || GENRE_COLORS[book.genre] || '#d0d0d0';
+  const t = document.createElement('div');
+  t.className    = 'spine-title';
+  t.textContent  = book.title;
+  fb.appendChild(t);
+  return fb;
+}
+
+function buildTooltip(book) {
+  const tt = document.createElement('div');
+  tt.className = 'spine-tooltip';
+  tt.innerHTML = `
+    <div class="tt-title">${book.title}</div>
+    <div class="tt-author">${book.author || ''}</div>
+    <div class="tt-rating">${'★'.repeat(book.rating||0)}${'☆'.repeat(5-(book.rating||0))}</div>
+    <button class="tt-remove">remove</button>
+  `;
+  tt.querySelector('.tt-remove').onclick = async e => {
+    e.stopPropagation();
+    if (!confirm(`Remove "${book.title}"?`)) return;
+    await removeBook(book.firestoreId);
+  };
+  return tt;
+}
+
+/* ─── SHELF NAVIGATION ─── */
+document.getElementById('prevShelf').onclick = () => {
+  if (currentPageIdx > 0) { currentPageIdx--; renderShelf(); }
+};
+
+document.getElementById('nextShelf').onclick = () => {
+  const total = Math.max(1, Math.ceil(allBooks.length / BOOKS_PER_PAGE));
+  if (currentPageIdx < total - 1) { currentPageIdx++; renderShelf(); }
+};
+
+window.addEventListener('resize', renderShelf);
+
+/* ─── SEARCH ─── */
+let searchTimer;
+const $searchInput    = document.getElementById('searchInput');
+const $searchDropdown = document.getElementById('searchDropdown');
+
+document.getElementById('searchBtn').onclick = doSearch;
+$searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+$searchInput.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  if (!$searchInput.value.trim()) { closeDropdown(); return; }
+  searchTimer = setTimeout(doSearch, 500);
+});
+
+async function doSearch() {
+  const q = $searchInput.value.trim();
+  if (!q) return;
+  $searchDropdown.classList.remove('hidden');
+  $searchDropdown.innerHTML = '<div class="sr-status">searching…</div>';
+
+  try {
+    const res  = await fetch(
+      `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&fields=items(volumeInfo(title,authors,imageLinks))`
+    );
+    const data = await res.json();
+
+    if (!data.items?.length) {
+      $searchDropdown.innerHTML = '<div class="sr-status">no results found</div>';
+      return;
+    }
+
+    $searchDropdown.innerHTML = '';
+    data.items.forEach(item => {
+      const info   = item.volumeInfo;
+      const title  = info.title || 'Unknown';
+      const author = info.authors?.[0] || 'Unknown';
+      const cover  = (info.imageLinks?.thumbnail || '').replace('http:', 'https:');
+
+      const row = document.createElement('div');
+      row.className = 'sr-item';
+
+      if (cover) {
+        const img = document.createElement('img');
+        img.className = 'sr-thumb';
+        img.src = cover; img.alt = title;
+        row.appendChild(img);
+      } else {
+        const ph = document.createElement('div');
+        ph.className = 'sr-thumb';
+        ph.textContent = '📚';
+        row.appendChild(ph);
+      }
+
+      const inf = document.createElement('div');
+      inf.className = 'sr-info';
+      inf.innerHTML = `<div class="sr-title">${title}</div><div class="sr-author">${author}</div>`;
+
+      const btn = document.createElement('button');
+      btn.className = 'sr-add';
+      btn.textContent = '+ ADD';
+      btn.onclick = e => {
+        e.stopPropagation();
+        openGenreSelector({ title, author, cover }, false);
+      };
+
+      row.append(inf, btn);
+      $searchDropdown.appendChild(row);
+    });
+  } catch {
+    $searchDropdown.innerHTML = '<div class="sr-status">search failed — try again</div>';
+  }
+}
+
+function closeDropdown() {
+  $searchDropdown.classList.add('hidden');
+  $searchDropdown.innerHTML = '';
+}
+
+document.addEventListener('click', e => {
+  if (!$searchDropdown.contains(e.target) &&
+      !$searchInput.contains(e.target) &&
+      e.target.id !== 'searchBtn') closeDropdown();
+});
+
+/* ─── GENRE SELECTOR ─── */
+function openGenreSelector(bookData, editMode) {
+  isEditGenre = editMode;
+  pendingBook = bookData;
+  if (!editMode) closeDropdown();
+
+  const grid = document.getElementById('genreGrid');
+  grid.innerHTML = '';
+
+  GENRES.forEach(genre => {
+    const btn = document.createElement('button');
+    btn.className       = 'genre-btn';
+    btn.textContent     = genre;
+    btn.style.background = GENRE_COLORS[genre];
+    btn.onclick = async () => {
+      closeGenre();
+      if (isEditGenre && currentBook) {
+        const user = auth.currentUser;
+        if (!user) return;
+        await updateDoc(
+          doc(db, 'users', user.uid, 'books', currentBook.firestoreId),
+          { genre, spineColor: GENRE_COLORS[genre] }
+        );
+        await loadBooks(user.uid);
+        showNotif('✦ genre updated!');
+      } else {
+        await addBook({ ...pendingBook, genre });
+      }
+      pendingBook = null;
+    };
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('genreOverlay').classList.remove('hidden');
+}
+
+function closeGenre() { document.getElementById('genreOverlay').classList.add('hidden'); }
+
+document.getElementById('genreCancel').onclick = closeGenre;
+document.getElementById('genreOverlay').onclick = e => {
+  if (e.target === document.getElementById('genreOverlay')) closeGenre();
+};
+
+/* ─── ADD / REMOVE BOOK ─── */
+async function addBook(bookData) {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const newBook = {
+    title:      bookData.title  || 'Unknown',
+    author:     bookData.author || 'Unknown',
+    coverUrl:   bookData.cover  || '',
+    spineColor: GENRE_COLORS[bookData.genre] || '#d0d0d0',
+    genre:      bookData.genre  || 'Other',
+    rating:     0,
+    addedAt:    new Date()
+  };
+
+  const ref = await addDoc(collection(db, 'users', user.uid, 'books'), newBook);
+  await updateDoc(ref, { firestoreId: ref.id });
+  await loadBooks(user.uid);
+  showNotif('✨ added to shelf!');
+}
+
+async function removeBook(firestoreId) {
+  const user = auth.currentUser;
+  if (!user) return;
+  await deleteDoc(doc(db, 'users', user.uid, 'books', firestoreId));
+  closeModal();
+  await loadBooks(user.uid);
+  showNotif('📖 removed');
+}
+
+/* ─── BOOK MODAL ─── */
+function openModal(book) {
+  currentBook = book;
+  document.getElementById('modalTitle').textContent  = book.title;
+  document.getElementById('modalAuthor').textContent = book.author || '';
+  document.getElementById('modalCover').src          = book.coverUrl || '';
+  document.getElementById('modalGenre').textContent  = book.genre || 'Other';
+  updateStars(book.rating || 0);
+  document.getElementById('bookModal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('bookModal').classList.add('hidden');
+  currentBook = null;
+}
+
+document.getElementById('modalDuck').onclick   = closeModal;
+document.getElementById('modalCard').onclick   = e => e.stopPropagation();
+document.getElementById('bookModal').onclick   = e => {
+  if (e.target === document.getElementById('bookModal')) closeModal();
+};
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function updateStars(rating) {
+  for (let i = 1; i <= 5; i++)
+    document.getElementById(`star-${i}`).classList.toggle('filled', i <= rating);
+}
+
+document.querySelectorAll('.star').forEach(s => {
+  s.onclick = async () => {
+    if (!currentBook || !auth.currentUser) return;
+    const n = parseInt(s.dataset.star);
+    await updateDoc(
+      doc(db, 'users', auth.currentUser.uid, 'books', currentBook.firestoreId),
+      { rating: n }
+    );
+    currentBook.rating = n;
+    const b = allBooks.find(b => b.firestoreId === currentBook.firestoreId);
+    if (b) b.rating = n;
+    updateStars(n);
+    renderShelf();
+  };
+});
+
+document.getElementById('deleteBookBtn').onclick = async () => {
+  if (!currentBook || !confirm(`Remove "${currentBook.title}"?`)) return;
+  await removeBook(currentBook.firestoreId);
+};
+
+document.getElementById('editGenreBtn').onclick = () => {
+  if (!currentBook) return;
+  const saved = { ...currentBook };
+  closeModal();
+  openGenreSelector(saved, true);
+};
+
+/* ─── NOTIFICATION ─── */
+function showNotif(msg) {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.classList.add('show');
+  spawnConfetti();
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function spawnConfetti() {
+  const colors = ['#ffb3c6','#d1b3ff','#bde0fe','#ffc8dd','#a8d8d8'];
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement('div');
+    c.className          = 'confetti-piece';
+    c.style.left         = Math.random() * 100 + 'vw';
+    c.style.background   = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 0.4 + 's';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2200);
+  }
+}
+
+/* ─── SERVICE WORKER ─── */
+if ('serviceWorker' in navigator)
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+</script>
 </body>
 </html>
