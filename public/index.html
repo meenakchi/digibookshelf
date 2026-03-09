@@ -22,9 +22,6 @@
 
     .hidden { display: none !important; }
 
-    /* ─────────────────────
-       NAVBAR
-    ───────────────────── */
     #navbar {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -113,9 +110,6 @@
 
     .nav-links a:hover, #logoutBtn:hover { background: #caf2fb; }
 
-    /* ─────────────────────
-       AUTH
-    ───────────────────── */
     #auth-container {
       position: relative;
       width: 90%;
@@ -161,9 +155,6 @@
       white-space: nowrap;
     }
 
-    /* ─────────────────────
-       APP WRAPPER
-    ───────────────────── */
     #app {
       padding-top: 70px;
       min-height: 100vh;
@@ -172,10 +163,7 @@
       align-items: center;
     }
 
-    .hero-header {
-      text-align: center;
-      padding: 24px 20px 8px;
-    }
+    .hero-header { text-align: center; padding: 24px 20px 8px; }
 
     .hero-header h1 {
       font-size: clamp(32px, 5vw, 60px);
@@ -185,44 +173,25 @@
       line-height: 1;
     }
 
-    .hero-header p {
-      font-size: 16px;
-      color: #888;
-      margin-top: 6px;
-    }
+    .hero-header p { font-size: 16px; color: #888; margin-top: 6px; }
 
-    /* ─────────────────────
-       SHELF SECTION
-    ───────────────────── */
     .shelf-section {
       width: 100%;
       max-width: 900px;
       padding: 12px 16px 40px;
     }
 
-    .shelf-frame {
-      position: relative;
-      width: 100%;
-      user-select: none;
-    }
+    .shelf-frame { position: relative; width: 100%; user-select: none; }
 
-    .shelf-image {
-      width: 100%;
-      display: block;
-      image-rendering: pixelated;
-    }
+    .shelf-image { width: 100%; display: block; image-rendering: pixelated; }
 
     .books-layer {
       position: absolute;
       top: 0; left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       pointer-events: none;
     }
 
-    /* ─────────────────────
-       BOOK SPINE
-    ───────────────────── */
     .book-spine {
       position: absolute;
       pointer-events: auto;
@@ -245,90 +214,58 @@
     }
 
     .spine-clip {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       overflow: hidden;
       border-radius: 2px 3px 3px 2px;
-      box-shadow:
-        -1px 0 2px rgba(0,0,0,0.22),
-        2px 0 6px rgba(0,0,0,0.18),
-        inset 2px 0 5px rgba(255,255,255,0.12);
+      box-shadow: -1px 0 2px rgba(0,0,0,0.22), 2px 0 6px rgba(0,0,0,0.18), inset 2px 0 5px rgba(255,255,255,0.12);
       position: relative;
     }
 
-    /* ── SPINE COVER via CSS background-image ── */
     .spine-img-cover {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center top;
-      background-repeat: no-repeat;
-      border-radius: 2px 3px 3px 2px;
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background-color: #eee;
+      display: block;
     }
 
-    /* Depth gradient overlay */
     .spine-img-cover::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg,
-        rgba(255,255,255,0.07) 0%,
-        rgba(0,0,0,0) 40%,
-        rgba(0,0,0,0.22) 100%);
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%);
       border-radius: inherit;
       z-index: 1;
     }
 
-    /* Left-edge binding highlight */
     .spine-img-cover::after {
       content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(to right,
-        rgba(255,255,255,0.28),
-        rgba(255,255,255,0));
+      position: absolute; top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,0.28), rgba(255,255,255,0));
       border-radius: 2px 0 0 2px;
       z-index: 2;
     }
 
-    /* Fallback: colored spine with rotated title */
     .spine-fallback {
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       border-radius: 2px 3px 3px 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       position: relative;
-      box-shadow:
-        -1px 0 2px rgba(0,0,0,0.22),
-        2px 0 6px rgba(0,0,0,0.18);
+      box-shadow: -1px 0 2px rgba(0,0,0,0.22), 2px 0 6px rgba(0,0,0,0.18);
     }
 
     .spine-fallback::before {
       content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg,
-        rgba(255,255,255,0.2) 0%,
-        transparent 35%,
-        rgba(0,0,0,0.14) 100%);
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 35%, rgba(0,0,0,0.14) 100%);
       border-radius: inherit;
     }
 
     .spine-fallback::after {
       content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(to right,
-        rgba(255,255,255,0.3),
-        rgba(255,255,255,0));
+      position: absolute; top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(to right, rgba(255,255,255,0.3), rgba(255,255,255,0));
       border-radius: 2px 0 0 2px;
     }
 
@@ -348,9 +285,6 @@
       line-height: 1.1;
     }
 
-    /* ─────────────────────
-       SPINE TOOLTIP
-    ───────────────────── */
     .spine-tooltip {
       position: absolute;
       bottom: calc(100% + 10px);
@@ -383,29 +317,19 @@
     .tt-rating { font-size: 14px; color: #f4a0b8; letter-spacing: 1px; margin-bottom: 5px; }
 
     .tt-remove {
-      font-size: 11px;
-      color: #e07070;
-      background: none;
-      border: 1px solid rgba(224,112,112,0.35);
-      border-radius: 5px;
-      cursor: pointer;
+      font-size: 11px; color: #e07070;
+      background: none; border: 1px solid rgba(224,112,112,0.35);
+      border-radius: 5px; cursor: pointer;
       font-family: 'Jersey 10', sans-serif;
-      padding: 2px 8px;
-      pointer-events: auto;
+      padding: 2px 8px; pointer-events: auto;
       transition: background 0.1s;
     }
 
     .tt-remove:hover { background: rgba(224,112,112,0.12); }
 
-    /* ─────────────────────
-       SHELF NAV
-    ───────────────────── */
     .shelf-nav {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-top: 10px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; margin-top: 10px;
     }
 
     .nav-btn {
@@ -416,9 +340,7 @@
       width: 44px; height: 44px;
       border-radius: 50%;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s;
       box-shadow: 0 4px 0 #d4f5e9;
       font-family: 'Jersey 10', sans-serif;
@@ -430,13 +352,9 @@
 
     .page-indicator { font-size: 16px; color: #888; min-width: 50px; text-align: center; }
 
-    /* ─────────────────────
-       SEARCH DROPDOWN
-    ───────────────────── */
     .search-dropdown {
       position: fixed;
-      top: 60px;
-      left: 50%;
+      top: 60px; left: 50%;
       transform: translateX(-50%);
       width: min(480px, 88vw);
       background: #f4fffa;
@@ -450,9 +368,7 @@
     }
 
     .sr-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: flex; align-items: center; gap: 12px;
       padding: 10px 14px;
       border-bottom: 1px solid rgba(168,216,216,0.25);
       transition: background 0.1s;
@@ -463,10 +379,8 @@
 
     .sr-thumb {
       width: 34px; height: 50px;
-      object-fit: cover;
-      border-radius: 3px;
-      flex-shrink: 0;
-      background: #d4f5e9;
+      object-fit: cover; border-radius: 3px;
+      flex-shrink: 0; background: #d4f5e9;
       display: flex; align-items: center; justify-content: center;
       font-size: 18px;
     }
@@ -476,24 +390,16 @@
     .sr-author { font-size: 12px; color: #888; }
 
     .sr-add {
-      background: #a8d8d8;
-      border: 1px solid #88c4c4;
-      border-radius: 6px;
-      padding: 5px 10px;
-      font-family: 'Jersey 10', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-      transition: background 0.15s;
+      background: #a8d8d8; border: 1px solid #88c4c4;
+      border-radius: 6px; padding: 5px 10px;
+      font-family: 'Jersey 10', sans-serif; font-size: 14px;
+      cursor: pointer; white-space: nowrap;
+      flex-shrink: 0; transition: background 0.15s;
     }
 
     .sr-add:hover { background: #8fcece; }
     .sr-status { padding: 16px; text-align: center; color: #888; font-size: 14px; }
 
-    /* ─────────────────────
-       GENRE MODAL
-    ───────────────────── */
     .genre-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.5);
@@ -502,10 +408,8 @@
     }
 
     .genre-modal {
-      background: #f4fffa;
-      border: 3px solid #a8d8d8;
-      border-radius: 16px;
-      padding: 26px 20px;
+      background: #f4fffa; border: 3px solid #a8d8d8;
+      border-radius: 16px; padding: 26px 20px;
       width: min(400px, 100%);
       box-shadow: 0 16px 48px rgba(0,0,0,0.18);
     }
@@ -513,22 +417,15 @@
     .genre-modal h3 { font-size: 22px; text-align: center; margin-bottom: 16px; color: #333; }
 
     .genre-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 8px; margin-bottom: 12px;
     }
 
     .genre-btn {
-      padding: 10px 6px;
-      border: 2px solid rgba(0,0,0,0.1);
-      border-radius: 8px;
-      font-family: 'Jersey 10', sans-serif;
-      font-size: 14px;
-      cursor: pointer;
-      text-align: center;
-      color: #333;
-      transition: transform 0.12s, box-shadow 0.12s;
+      padding: 10px 6px; border: 2px solid rgba(0,0,0,0.1);
+      border-radius: 8px; font-family: 'Jersey 10', sans-serif;
+      font-size: 14px; cursor: pointer; text-align: center;
+      color: #333; transition: transform 0.12s, box-shadow 0.12s;
     }
 
     .genre-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.13); }
@@ -540,9 +437,6 @@
       font-size: 16px; cursor: pointer; color: #888;
     }
 
-    /* ─────────────────────
-       BOOK MODAL
-    ───────────────────── */
     .modal-overlay {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.8);
@@ -553,22 +447,16 @@
     .modal-card {
       position: relative;
       background: linear-gradient(135deg, #fff5f5 0%, #f4fffa 100%);
-      border: 3px solid #ffd1dc;
-      border-radius: 20px;
-      padding: 26px 22px;
-      width: min(560px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
+      border: 3px solid #ffd1dc; border-radius: 20px;
+      padding: 26px 22px; width: min(560px, 100%);
+      max-height: 90vh; overflow-y: auto;
       box-shadow: 0 20px 60px rgba(0,0,0,0.35);
     }
 
     .modal-duck {
-      position: absolute;
-      top: -52px; right: 12px;
-      width: 58px;
-      image-rendering: pixelated;
-      cursor: pointer;
-      transform: scaleX(-1);
+      position: absolute; top: -52px; right: 12px;
+      width: 58px; image-rendering: pixelated;
+      cursor: pointer; transform: scaleX(-1);
       animation: duckBounce 2.5s ease-in-out infinite;
     }
 
@@ -580,15 +468,12 @@
     .modal-layout { display: flex; gap: 20px; }
 
     .modal-cover-img {
-      width: 130px; height: 195px;
-      object-fit: cover;
-      border-radius: 6px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+      width: 130px; height: 195px; object-fit: cover;
+      border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,0.22);
       flex-shrink: 0;
     }
 
     .modal-info { flex: 1; }
-
     .modal-info h2 { font-size: 22px; color: #333; margin-bottom: 4px; line-height: 1.2; }
     .modal-author  { font-size: 15px; color: #888; margin-bottom: 14px; }
 
@@ -600,31 +485,22 @@
     .modal-lbl { font-size: 14px; color: #888; }
 
     .modal-val {
-      font-size: 14px;
-      background: rgba(168,216,216,0.2);
-      padding: 3px 10px;
-      border-radius: 10px;
+      font-size: 14px; background: rgba(168,216,216,0.2);
+      padding: 3px 10px; border-radius: 10px;
       border: 1px solid rgba(168,216,216,0.4);
     }
 
     .edit-btn {
-      padding: 3px 10px;
-      background: #a8d8d8;
-      border: 1px solid #88c4c4;
-      border-radius: 6px;
-      font-family: 'Jersey 10', sans-serif;
-      font-size: 13px;
-      cursor: pointer;
+      padding: 3px 10px; background: #a8d8d8;
+      border: 1px solid #88c4c4; border-radius: 6px;
+      font-family: 'Jersey 10', sans-serif; font-size: 13px; cursor: pointer;
     }
 
     .stars-row { display: flex; gap: 4px; }
 
     .star {
-      font-size: 28px;
-      cursor: pointer;
-      color: #ffb6c1;
-      transition: all 0.15s;
-      user-select: none;
+      font-size: 28px; cursor: pointer; color: #ffb6c1;
+      transition: all 0.15s; user-select: none;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -632,30 +508,21 @@
     .star.filled { color: #ff1493; filter: drop-shadow(0 2px 6px rgba(255,20,147,0.35)); }
 
     .delete-btn {
-      display: block; width: 100%;
-      margin-top: 18px; padding: 10px;
-      background: transparent;
-      border: 2px solid #ff6b6b;
-      border-radius: 10px;
-      color: #ff6b6b;
-      font-family: 'Jersey 10', sans-serif;
-      font-size: 18px;
-      cursor: pointer;
-      transition: background 0.2s;
+      display: block; width: 100%; margin-top: 18px; padding: 10px;
+      background: transparent; border: 2px solid #ff6b6b;
+      border-radius: 10px; color: #ff6b6b;
+      font-family: 'Jersey 10', sans-serif; font-size: 18px;
+      cursor: pointer; transition: background 0.2s;
     }
 
     .delete-btn:hover { background: rgba(255,107,107,0.1); }
     .modal-hint { font-size: 12px; color: #bbb; text-align: center; margin-top: 12px; }
 
-    /* ─────────────────────
-       NOTIF + CONFETTI
-    ───────────────────── */
     .notif {
       position: fixed; top: 50%; left: 50%;
       transform: translate(-50%,-50%) scale(0.9);
       background: white; border: 2px solid #a8d8d8;
-      border-radius: 16px; padding: 20px 32px;
-      font-size: 18px;
+      border-radius: 16px; padding: 20px 32px; font-size: 18px;
       box-shadow: 0 16px 48px rgba(0,0,0,0.12);
       opacity: 0; transition: all 0.3s;
       z-index: 9999; pointer-events: none;
@@ -675,9 +542,6 @@
       100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
 
-    /* ─────────────────────
-       RESPONSIVE
-    ───────────────────── */
     @media (max-width: 600px) {
       #navbar { padding: 0 10px; gap: 8px; }
       .nav-logo span { display: none; }
@@ -687,18 +551,12 @@
       .shelf-section { padding: 8px 8px 32px; }
     }
 
-    @media (min-width: 900px) {
-      .shelf-section { max-width: 800px; }
-    }
-
-    @media (min-width: 1200px) {
-      .shelf-section { max-width: 960px; }
-    }
+    @media (min-width: 900px)  { .shelf-section { max-width: 800px; } }
+    @media (min-width: 1200px) { .shelf-section { max-width: 960px; } }
   </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav id="navbar" class="hidden">
   <a class="nav-logo" href="#">
     <img src="/assets/blueberry.png" alt="Bookies">
@@ -715,10 +573,8 @@
   </div>
 </nav>
 
-<!-- SEARCH DROPDOWN -->
 <div class="search-dropdown hidden" id="searchDropdown"></div>
 
-<!-- AUTH -->
 <div id="auth-container">
   <img src="/assets/login.gif" class="login-bg" />
   <input id="email"    class="pixel-input email"    type="email"    placeholder="Email" />
@@ -728,13 +584,11 @@
   <p id="authMsg" class="auth-msg"></p>
 </div>
 
-<!-- MAIN APP -->
 <div id="app" class="hidden">
   <div class="hero-header">
     <h1>MY READING SHELF</h1>
     <p>a cozy corner for my collection</p>
   </div>
-
   <div class="shelf-section">
     <div id="shelfFrameWrapper"></div>
     <div class="shelf-nav">
@@ -745,7 +599,6 @@
   </div>
 </div>
 
-<!-- GENRE SELECTOR -->
 <div class="genre-overlay hidden" id="genreOverlay">
   <div class="genre-modal">
     <h3>what genre is this? ✿</h3>
@@ -754,7 +607,6 @@
   </div>
 </div>
 
-<!-- BOOK MODAL -->
 <div class="modal-overlay hidden" id="bookModal">
   <div class="modal-card" id="modalCard">
     <img src="/assets/chick.gif" class="modal-duck" id="modalDuck" alt="close">
@@ -785,7 +637,6 @@
   </div>
 </div>
 
-<!-- NOTIF -->
 <div class="notif" id="notif"></div>
 
 <script type="module">
@@ -800,7 +651,7 @@ import {
 
 const auth = getAuth();
 
-/* ─── GENRE CONFIG ─── */
+/* ── GENRE CONFIG ── */
 const GENRE_COLORS = {
   'Fantasy':      '#d1b3ff',
   'Romance':      '#ffb3c6',
@@ -818,43 +669,41 @@ const GENRE_COLORS = {
 };
 const GENRES = Object.keys(GENRE_COLORS);
 
-/* ─── STATE ─── */
+/* ── COLOR UTILITY ── */
+function hashString(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+function getColorFromTitle(title) {
+  const pastels = [
+    '#ffb3c6','#cdb4db','#bde0fe','#a8d8d8','#ffc8dd',
+    '#f9ebae','#e2cfb6','#c0d6df','#fbc4ab','#d4e1cc',
+    '#d1b3ff','#fa9b90','#ffcfd2','#b8e0d2','#d6eadf',
+    '#eac4d5','#f7d9c4','#fae3d9','#c9ada7','#a8dadc'
+  ];
+  return pastels[hashString(title) % pastels.length];
+}
+
+/* ── STATE ── */
 let allBooks       = [];
 let currentPageIdx = 0;
 let currentBook    = null;
 let pendingBook    = null;
 let isEditGenre    = false;
+let isSearching    = false;
 
-/* ─── SEARCH RATE LIMIT STATE ─── */
-let lastSearchTime  = 0;
-let searchTimer     = null;
-let isSearching     = false;
-const SEARCH_COOLDOWN_MS = 1200; // minimum ms between API calls
-
-/* ─────────────────────────────────────────
-   SHELF LAYOUT CONFIG
-   ───────────────────────────────────────── */
+/* ── SHELF LAYOUT ── */
 const SHELF_ROWS = [
-  {
-    topPct: 20,
-    leftGroup:  { startPct: 10,  maxBooks: 3  },
-    rightGroup: { endPct:   90, maxBooks: 15 }
-  },
-  {
-    topPct: 39,
-    leftGroup:  { startPct: 10,  maxBooks: 10  },
-    rightGroup: { endPct:   93, maxBooks: 10  }
-  },
-  {
-    topPct: 84,
-    leftGroup:  { startPct: 10,  maxBooks: 4  },
-    rightGroup: { endPct:   93, maxBooks: 10 }
-  },
-  {
-    topPct: 96,
-    leftGroup:  { startPct: 10,  maxBooks: 4  },
-    rightGroup: { endPct:   93, maxBooks: 10 }
-  },
+  { topPct: 20, leftGroup: { startPct: 10, maxBooks: 3  }, rightGroup: { endPct: 90, maxBooks: 15 } },
+  { topPct: 39, leftGroup: { startPct: 10, maxBooks: 15 }, rightGroup: { endPct: 90, maxBooks: 9 } },
+  { topPct: 84, leftGroup: { startPct: 10, maxBooks: 4  }, rightGroup: { endPct: 93, maxBooks: 10 } },
+  { topPct: 96, leftGroup: { startPct: 10, maxBooks: 4  }, rightGroup: { endPct: 93, maxBooks: 10 } },
 ];
 
 const BOOKS_PER_PAGE = SHELF_ROWS.reduce(
@@ -863,21 +712,19 @@ const BOOKS_PER_PAGE = SHELF_ROWS.reduce(
 
 function spineSize() {
   const w = window.innerWidth;
-  if (w < 480)  return { w: 18, h: 80 };
-  if (w < 700)  return { w: 22, h: 95 };
+  if (w < 480)  return { w: 18, h: 80  };
+  if (w < 700)  return { w: 22, h: 95  };
   if (w < 1000) return { w: 26, h: 110 };
   return              { w: 30, h: 125 };
 }
 
-/* ─── AUTH ─── */
+/* ── AUTH ── */
 document.getElementById('loginBtn').onclick = async () => {
   try {
     await signInWithEmailAndPassword(auth,
       document.getElementById('email').value.trim(),
       document.getElementById('password').value.trim());
-  } catch(e) {
-    setAuthMsg('Login failed: ' + e.message, 'red');
-  }
+  } catch(e) { setAuthMsg('Login failed: ' + e.message, 'red'); }
 };
 
 document.getElementById('registerBtn').onclick = async () => {
@@ -885,17 +732,15 @@ document.getElementById('registerBtn').onclick = async () => {
     await createUserWithEmailAndPassword(auth,
       document.getElementById('email').value.trim(),
       document.getElementById('password').value.trim());
-  } catch(e) {
-    setAuthMsg('Register failed: ' + e.message, 'red');
-  }
+  } catch(e) { setAuthMsg('Register failed: ' + e.message, 'red'); }
 };
 
 document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
 function setAuthMsg(msg, color) {
   const el = document.getElementById('authMsg');
-  el.textContent  = msg;
-  el.style.color  = color;
+  el.textContent = msg;
+  el.style.color = color;
 }
 
 onAuthStateChanged(auth, async user => {
@@ -913,7 +758,7 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-/* ─── LOAD BOOKS FROM FIRESTORE ─── */
+/* ── FIRESTORE ── */
 async function loadBooks(uid) {
   const snap = await getDocs(collection(db, 'users', uid, 'books'));
   allBooks = [];
@@ -922,9 +767,7 @@ async function loadBooks(uid) {
   renderShelf();
 }
 
-/* ─────────────────────────────────────────
-   RENDER SHELF
-   ───────────────────────────────────────── */
+/* ── RENDER SHELF ── */
 function renderShelf() {
   const wrapper = document.getElementById('shelfFrameWrapper');
   wrapper.innerHTML = '';
@@ -936,8 +779,7 @@ function renderShelf() {
     (currentPageIdx + 1) * BOOKS_PER_PAGE
   );
 
-  document.getElementById('pageIndicator').textContent =
-    `${currentPageIdx + 1} / ${totalPages}`;
+  document.getElementById('pageIndicator').textContent = `${currentPageIdx + 1} / ${totalPages}`;
 
   const frame = document.createElement('div');
   frame.className = 'shelf-frame';
@@ -962,7 +804,6 @@ function renderShelf() {
     booksLayer.innerHTML = '';
     const { w: SW, h: SH } = spineSize();
     const GAP = 2;
-
     let globalIdx = 0;
 
     SHELF_ROWS.forEach(row => {
@@ -973,27 +814,23 @@ function renderShelf() {
       const bottomY = (row.topPct / 100) * imgH;
       const topY    = bottomY - SH;
 
-      // ── LEFT GROUP ──
-      const leftBooks = rowBooks.slice(0, row.leftGroup.maxBooks);
+      const leftBooks  = rowBooks.slice(0, row.leftGroup.maxBooks);
       const leftStartX = (row.leftGroup.startPct / 100) * imgW;
       leftBooks.forEach((book, i) => {
-        const x  = leftStartX + i * (SW + GAP);
         const el = buildSpine(book, globalIdx - totalSlots + i, SW, SH);
-        el.style.left   = x + 'px';
+        el.style.left   = (leftStartX + i * (SW + GAP)) + 'px';
         el.style.top    = topY + 'px';
         el.style.width  = SW + 'px';
         el.style.height = SH + 'px';
         booksLayer.appendChild(el);
       });
 
-      // ── RIGHT GROUP ──
       const rightBooks  = rowBooks.slice(row.leftGroup.maxBooks);
       const rightEndX   = (row.rightGroup.endPct / 100) * imgW;
       const rightStartX = rightEndX - rightBooks.length * (SW + GAP) + GAP;
       rightBooks.forEach((book, i) => {
-        const x  = rightStartX + i * (SW + GAP);
         const el = buildSpine(book, globalIdx - totalSlots + row.leftGroup.maxBooks + i, SW, SH);
-        el.style.left   = x + 'px';
+        el.style.left   = (rightStartX + i * (SW + GAP)) + 'px';
         el.style.top    = topY + 'px';
         el.style.width  = SW + 'px';
         el.style.height = SH + 'px';
@@ -1005,51 +842,24 @@ function renderShelf() {
   shelfImg.onload  = placeBooks;
   shelfImg.onerror = placeBooks;
   if (shelfImg.complete && shelfImg.naturalHeight > 0) placeBooks();
-
-  const resizeObserver = new ResizeObserver(placeBooks);
-  resizeObserver.observe(frame);
+  new ResizeObserver(placeBooks).observe(frame);
 }
 
-/* ─────────────────────────────────────────
-   BUILD SPINE ELEMENT
-   FIX: Use an <img> element with onerror fallback instead of
-   CSS background-image, so we can detect load failures and
-   swap to the colored fallback spine automatically.
-   ───────────────────────────────────────── */
+/* ── BUILD SPINE ── */
 function buildSpine(book, animIdx, SW, SH) {
   const spine = document.createElement('div');
-  spine.className = 'book-spine';
+  spine.className    = 'book-spine';
   spine.style.zIndex = String(10 + animIdx);
-  spine.style.opacity = '0';
-  setTimeout(() => {
-    spine.style.transition = 'opacity 0.3s ease, transform 0.22s cubic-bezier(0.34,1.56,0.64,1)';
-    spine.style.opacity = '1';
-  }, 50 + animIdx * 40);
 
   const clip = document.createElement('div');
   clip.className = 'spine-clip';
 
   if (book.coverUrl) {
-    // Use CSS background-image but with an invisible test <img> to detect load failure
-    const coverDiv = document.createElement('div');
-    coverDiv.className = 'spine-img-cover';
-    const src = book.coverUrl.replace('http:', 'https:').replace('zoom=1', 'zoom=2');
-    coverDiv.style.backgroundImage = `url('${src}')`;
-
-    // Hidden probe image to detect if cover actually loads
-    const probe = new Image();
-    probe.onload = () => {
-      // Cover loaded fine — nothing to do, CSS background-image handles display
-    };
-    probe.onerror = () => {
-      // Cover failed to load — replace with colored fallback
-      coverDiv.remove();
-      clip.innerHTML = '';
-      clip.appendChild(makeFallback(book));
-    };
-    probe.src = src;
-
-    clip.appendChild(coverDiv);
+    const img = document.createElement('img');
+    img.className = 'spine-img-cover';
+    img.src       = book.coverUrl.replace('http:', 'https:');
+    img.onerror   = () => { img.remove(); clip.appendChild(makeFallback(book)); };
+    clip.appendChild(img);
   } else {
     clip.appendChild(makeFallback(book));
   }
@@ -1061,12 +871,12 @@ function buildSpine(book, animIdx, SW, SH) {
 }
 
 function makeFallback(book) {
-  const fb  = document.createElement('div');
-  fb.className         = 'spine-fallback';
-  fb.style.background  = book.spineColor || GENRE_COLORS[book.genre] || '#d0d0d0';
+  const fb = document.createElement('div');
+  fb.className        = 'spine-fallback';
+  fb.style.background = book.spineColor || GENRE_COLORS[book.genre] || getColorFromTitle(book.title);
   const t = document.createElement('div');
-  t.className    = 'spine-title';
-  t.textContent  = book.title;
+  t.className   = 'spine-title';
+  t.textContent = book.title;
   fb.appendChild(t);
   return fb;
 }
@@ -1088,184 +898,100 @@ function buildTooltip(book) {
   return tt;
 }
 
-/* ─── SHELF NAVIGATION ─── */
+/* ── SHELF NAV ── */
 document.getElementById('prevShelf').onclick = () => {
   if (currentPageIdx > 0) { currentPageIdx--; renderShelf(); }
 };
-
 document.getElementById('nextShelf').onclick = () => {
   const total = Math.max(1, Math.ceil(allBooks.length / BOOKS_PER_PAGE));
   if (currentPageIdx < total - 1) { currentPageIdx++; renderShelf(); }
 };
-
 window.addEventListener('resize', renderShelf);
 
-/* ─────────────────────────────────────────
-   SEARCH — FIX 429 RATE LIMITING
-   Changes:
-   1. Longer debounce (1000ms for typing, instant for button)
-   2. Enforced cooldown between actual API calls
-   3. Retry with exponential backoff on 429
-   4. Open Library as fallback if Google Books keeps 429-ing
-   ───────────────────────────────────────── */
+/* ════════════════════════════════════════
+   SEARCH — Open Library only, no Google
+   No rate limits, no 429s, works every time
+════════════════════════════════════════ */
 const $searchInput    = document.getElementById('searchInput');
 const $searchDropdown = document.getElementById('searchDropdown');
-const searchCache     = {};
 
-document.getElementById('searchBtn').onclick = () => doSearch(true);
-$searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(true); });
 $searchInput.addEventListener('input', () => {
-  clearTimeout(searchTimer);
-  const q = $searchInput.value.trim();
-  if (!q) { closeDropdown(); return; }
-  // Longer debounce for typing to avoid rapid-fire requests
-  searchTimer = setTimeout(() => doSearch(false), 1000);
+  if (!$searchInput.value.trim()) closeDropdown();
 });
 
-async function fetchWithRetry(url, retries = 2, delayMs = 1500) {
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const res = await fetch(url);
-      if (res.status === 429) {
-        if (attempt < retries) {
-          // Exponential backoff: wait longer each retry
-          const wait = delayMs * Math.pow(2, attempt);
-          $searchDropdown.innerHTML = `<div class="sr-status">rate limited — retrying in ${Math.round(wait/1000)}s… (${attempt+1}/${retries})</div>`;
-          await new Promise(r => setTimeout(r, wait));
-          continue;
-        }
-        return null; // All retries exhausted
-      }
-      return res;
-    } catch(err) {
-      if (attempt === retries) throw err;
-      await new Promise(r => setTimeout(r, delayMs));
-    }
-  }
-  return null;
-}
+document.getElementById('searchBtn').onclick = () => doSearch();
+$searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+});
 
-async function searchGoogleBooks(q) {
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(q)}&maxResults=8&fields=items(volumeInfo(title,authors,imageLinks))`;
-  const res = await fetchWithRetry(url);
-  if (!res) return null; // 429 even after retries
-
-  const data = await res.json();
-  return data.items || null;
-}
-
-async function searchOpenLibrary(q) {
-  // Fallback: Open Library search API (no rate limits for basic queries)
-  try {
-    const res = await fetch(
-      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=8&fields=title,author_name,cover_i`
-    );
-    const data = await res.json();
-    if (!data.docs?.length) return null;
-
-    // Normalise to same shape as Google Books items
-    return data.docs.map(doc => ({
-      volumeInfo: {
-        title:      doc.title || 'Unknown',
-        authors:    doc.author_name || ['Unknown'],
-        imageLinks: doc.cover_i
-          ? { thumbnail: `https://covers.openlibrary.org/b/id/${doc.cover_i}-M.jpg` }
-          : {}
-      }
-    }));
-  } catch {
-    return null;
-  }
-}
-
-async function doSearch(immediate = false) {
+async function doSearch() {
   const q = $searchInput.value.trim();
-  if (!q) { closeDropdown(); return; }
-  if (isSearching) return;
-
-  // Respect cooldown between calls
-  const now = Date.now();
-  const timeSinceLast = now - lastSearchTime;
-  if (!immediate && timeSinceLast < SEARCH_COOLDOWN_MS) {
-    clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => doSearch(false), SEARCH_COOLDOWN_MS - timeSinceLast);
-    return;
-  }
-
-  if (searchCache[q]) {
-    renderDropdown(searchCache[q]);
-    return;
-  }
+  if (!q || isSearching) return;
 
   isSearching = true;
-  lastSearchTime = Date.now();
   $searchDropdown.classList.remove('hidden');
-  $searchDropdown.innerHTML = '<div class="sr-status">searching…</div>';
+  $searchDropdown.innerHTML = '<div class="sr-status">Searching…</div>';
 
   try {
-    let items = await searchGoogleBooks(q);
+    const res  = await fetch(
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(q)}&limit=10&fields=title,author_name,cover_i,key`
+    );
+    const data = await res.json();
 
-    if (!items) {
-      // Google Books failed with 429 — try Open Library
-      $searchDropdown.innerHTML = '<div class="sr-status">trying backup search…</div>';
-      items = await searchOpenLibrary(q);
-    }
-
-    if (!items || !items.length) {
-      $searchDropdown.innerHTML = '<div class="sr-status">no results found ✦</div>';
+    if (!data.docs || data.docs.length === 0) {
+      $searchDropdown.innerHTML = '<div class="sr-status">No books found.</div>';
       return;
     }
 
-    searchCache[q] = items;
-    renderDropdown(items);
-
+    renderResults(data.docs);
   } catch {
-    $searchDropdown.innerHTML = '<div class="sr-status">search failed — check your connection</div>';
+    $searchDropdown.innerHTML = '<div class="sr-status">Search failed. Check your connection.</div>';
   } finally {
     isSearching = false;
   }
 }
 
-function renderDropdown(items) {
+function renderResults(docs) {
   $searchDropdown.classList.remove('hidden');
   $searchDropdown.innerHTML = '';
-  items.forEach(item => {
-    const info   = item.volumeInfo;
-    const title  = info.title || 'Unknown';
-    const author = info.authors?.[0] || 'Unknown';
-    const cover  = (info.imageLinks?.thumbnail || '')
-      .replace('http:', 'https:')
-      .replace('zoom=1', 'zoom=2');
+
+  docs.forEach(d => {
+    const title  = d.title || 'Unknown';
+    const author = d.author_name?.[0] || 'Unknown';
+    // Open Library cover — size M is a good thumbnail
+    const cover  = d.cover_i
+      ? `https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`
+      : '';
 
     const row = document.createElement('div');
     row.className = 'sr-item';
 
+    const ph = document.createElement('div');
+    ph.className   = 'sr-thumb';
+    ph.textContent = '📚';
+
     if (cover) {
-      const img = document.createElement('img');
+      const img     = document.createElement('img');
       img.className = 'sr-thumb';
-      img.src = cover;
-      img.alt = title;
-      // If thumbnail fails, show emoji placeholder
-      img.onerror = () => { img.style.display = 'none'; ph.style.display = 'flex'; };
-      const ph = document.createElement('div');
-      ph.className = 'sr-thumb';
-      ph.textContent = '📚';
+      img.src       = cover;
+      img.alt       = title;
+      img.onerror   = () => { img.style.display = 'none'; ph.style.display = 'flex'; };
       ph.style.display = 'none';
       row.appendChild(img);
-      row.appendChild(ph);
-    } else {
-      const ph = document.createElement('div');
-      ph.className = 'sr-thumb'; ph.textContent = '📚';
-      row.appendChild(ph);
     }
+    row.appendChild(ph);
 
     const inf = document.createElement('div');
     inf.className = 'sr-info';
     inf.innerHTML = `<div class="sr-title">${title}</div><div class="sr-author">${author}</div>`;
 
-    const btn = document.createElement('button');
-    btn.className = 'sr-add'; btn.textContent = '+ ADD';
-    btn.onclick = e => { e.stopPropagation(); openGenreSelector({ title, author, cover }, false); };
+    const btn     = document.createElement('button');
+    btn.className   = 'sr-add';
+    btn.textContent = '+ ADD';
+    btn.onclick = e => {
+      e.stopPropagation();
+      openGenreSelector({ title, author, cover }, false);
+    };
 
     row.append(inf, btn);
     $searchDropdown.appendChild(row);
@@ -1278,12 +1004,14 @@ function closeDropdown() {
 }
 
 document.addEventListener('click', e => {
-  if (!$searchDropdown.contains(e.target) &&
-      !$searchInput.contains(e.target) &&
-      e.target.id !== 'searchBtn') closeDropdown();
+  if (
+    !$searchDropdown.contains(e.target) &&
+    !$searchInput.contains(e.target) &&
+    e.target.id !== 'searchBtn'
+  ) closeDropdown();
 });
 
-/* ─── GENRE SELECTOR ─── */
+/* ── GENRE SELECTOR ── */
 function openGenreSelector(bookData, editMode) {
   isEditGenre = editMode;
   pendingBook = bookData;
@@ -1293,7 +1021,7 @@ function openGenreSelector(bookData, editMode) {
   grid.innerHTML = '';
 
   GENRES.forEach(genre => {
-    const btn = document.createElement('button');
+    const btn            = document.createElement('button');
     btn.className        = 'genre-btn';
     btn.textContent      = genre;
     btn.style.background = GENRE_COLORS[genre];
@@ -1320,13 +1048,12 @@ function openGenreSelector(bookData, editMode) {
 }
 
 function closeGenre() { document.getElementById('genreOverlay').classList.add('hidden'); }
-
 document.getElementById('genreCancel').onclick = closeGenre;
 document.getElementById('genreOverlay').onclick = e => {
   if (e.target === document.getElementById('genreOverlay')) closeGenre();
 };
 
-/* ─── ADD / REMOVE BOOK ─── */
+/* ── ADD / REMOVE BOOK ── */
 async function addBook(bookData) {
   const user = auth.currentUser;
   if (!user) return;
@@ -1335,7 +1062,7 @@ async function addBook(bookData) {
     title:      bookData.title  || 'Unknown',
     author:     bookData.author || 'Unknown',
     coverUrl:   bookData.cover  || '',
-    spineColor: GENRE_COLORS[bookData.genre] || '#d0d0d0',
+    spineColor: GENRE_COLORS[bookData.genre] || getColorFromTitle(bookData.title),
     genre:      bookData.genre  || 'Other',
     rating:     0,
     addedAt:    new Date()
@@ -1356,7 +1083,7 @@ async function removeBook(firestoreId) {
   showNotif('📖 removed');
 }
 
-/* ─── BOOK MODAL ─── */
+/* ── BOOK MODAL ── */
 function openModal(book) {
   currentBook = book;
   document.getElementById('modalTitle').textContent  = book.title;
@@ -1372,9 +1099,9 @@ function closeModal() {
   currentBook = null;
 }
 
-document.getElementById('modalDuck').onclick   = closeModal;
-document.getElementById('modalCard').onclick   = e => e.stopPropagation();
-document.getElementById('bookModal').onclick   = e => {
+document.getElementById('modalDuck').onclick = closeModal;
+document.getElementById('modalCard').onclick = e => e.stopPropagation();
+document.getElementById('bookModal').onclick = e => {
   if (e.target === document.getElementById('bookModal')) closeModal();
 };
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
@@ -1412,7 +1139,7 @@ document.getElementById('editGenreBtn').onclick = () => {
   openGenreSelector(saved, true);
 };
 
-/* ─── NOTIFICATION ─── */
+/* ── NOTIFICATION + CONFETTI ── */
 function showNotif(msg) {
   const el = document.getElementById('notif');
   el.textContent = msg;
@@ -1424,17 +1151,17 @@ function showNotif(msg) {
 function spawnConfetti() {
   const colors = ['#ffb3c6','#d1b3ff','#bde0fe','#ffc8dd','#a8d8d8'];
   for (let i = 0; i < 30; i++) {
-    const c = document.createElement('div');
-    c.className            = 'confetti-piece';
-    c.style.left           = Math.random() * 100 + 'vw';
-    c.style.background     = colors[Math.floor(Math.random() * colors.length)];
+    const c            = document.createElement('div');
+    c.className        = 'confetti-piece';
+    c.style.left       = Math.random() * 100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
     c.style.animationDelay = Math.random() * 0.4 + 's';
     document.body.appendChild(c);
     setTimeout(() => c.remove(), 2200);
   }
 }
 
-/* ─── SERVICE WORKER ─── */
+/* ── SERVICE WORKER ── */
 if ('serviceWorker' in navigator)
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 </script>
